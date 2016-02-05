@@ -24,13 +24,6 @@ type Static struct {
 	pages     map[string]*Page
 }
 
-type Page struct {
-	Path string
-	Func PageFunc
-}
-
-type PageFunc func(path string) (data interface{}, tmpl []string)
-
 func NewStatic() *Static {
 	return &Static{
 		SourceDir:  "source",
