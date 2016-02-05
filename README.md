@@ -20,22 +20,22 @@ go get github.com/leighmcculloch/static
     s := static.NewStatic()
     ```
 
-2. (Optional) Configure the `Source` and `Build` directories, and other things.
-
-    ```go
-    s.SourceDir = "source" // The root directory for templates
-    s.BuildDir = "build"   // The root directory for the built website
-    s.ServerPort = 4567    // The port served on when running in server mode
-    s.TemplateFuncs = template.FuncMap{...} // A map of functions available to templates
-    ```
-
-3. Define a handler for each page that returns a data model, list of templates, and the entry point template to load for the page. The function will be called when building the page and the data model will be given to the template specific as the last return value. Templates are looked for in the source directory.
+2. Define a handler for each page that returns a data model, list of templates, and the entry point template to load for the page. The function will be called when building the page and the data model will be given to the template specific as the last return value. Templates are looked for in the source directory.
 
     ```go
     s.Handle("/index.html", func (path string) (data interface{}, tmpls []string, tmpl string) {
       ...
       return data, []string{"base.html", "index.html"}, "entry"
     }
+    ```
+
+3. (Optional) Configure the `Source` and `Build` directories, and other things.
+
+    ```go
+    s.SourceDir = "source" // The root directory for templates
+    s.BuildDir = "build"   // The root directory for the built website
+    s.ServerPort = 4567    // The port served on when running in server mode
+    s.TemplateFuncs = template.FuncMap{...} // A map of functions available to templates
     ```
 
 4. Call `Run`.
