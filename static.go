@@ -120,8 +120,8 @@ func (s *Static) handleRequest(w io.Writer, path string, ignoreCache bool) error
 	if page == nil {
 		return errNotFound
 	}
-	data, tmpl := page.Func(path)
-	err := s.writeResponse(w, data, tmpl, ignoreCache)
+	data, tmpls, tmpl := page.Func(path)
+	err := s.writeResponse(w, data, tmpls, tmpl, ignoreCache)
 	return err
 }
 
@@ -155,12 +155,12 @@ func (s *Static) getTemplates(tmpl []string, ignoreCache bool) (*template.Templa
 	return s.templates[h], err
 }
 
-func (s *Static) writeResponse(w io.Writer, data interface{}, tmpl []string, ignoreCache bool) error {
-	template, err := s.getTemplates(tmpl, ignoreCache)
+func (s *Static) writeResponse(w io.Writer, data interface{}, tmpls []string, tmpl string, ignoreCache bool) error {
+	templates, err := s.getTemplates(tmpls, ignoreCache)
 	if err != nil {
 		return err
 	}
-	return template.ExecuteTemplate(w, "base", data)
+	return templates.ExecuteTemplate(w, tmpl, data)
 }
 
 func (s *Static) templatePath(filename string) string {

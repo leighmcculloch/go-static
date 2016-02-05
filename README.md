@@ -27,12 +27,12 @@ go get github.com/leighmcculloch/static
     s.BuildDir = "build"   // The root directory for the built website
     ```
 
-3. Define a handler for each page that returns a data model, and a list of templates to load for the page. The function will be called when building the page and the data model will be given to the template when executed. The templates must define a template named `base` and that will be executed. Templates are looked for in the source directory.
+3. Define a handler for each page that returns a data model, list of templates, and the entry point template to load for the page. The function will be called when building the page and the data model will be given to the template specific as the last return value. Templates are looked for in the source directory.
 
     ```go
-    s.Handle("/index.html", func (path string) (data interface{}, templates []string) {
+    s.Handle("/index.html", func (path string) (data interface{}, tmpls []string, tmpl string) {
       ...
-      return data, []string{"base.html", "index.html"}
+      return data, []string{"base.html", "index.html"}, "entry"
     }
     ```
 
@@ -60,16 +60,16 @@ const days = 365
 func main() {
   s := static.NewStatic()
 
-  s.Handle("/index.html", func(path string) (interface{}, []string) {
-    return days, []string{"base.html", "index.html"}
+  s.Handle("/index.html", func(path string) (interface{}, []string, string) {
+    return days, []string{"base.html", "index.html"}, "entry"
   })
 
   for d := 1; d <= days; d++ {
     day := struct { Number int } { d }
 
     path := fmt.Sprintf("/%d.html", day.Number)
-    s.Handle(path, func(path string) (interface{}, []string) {
-      return day, []string{"base.html", "day.html"}
+    s.Handle(path, func(path string) (interface{}, []string, string) {
+      return day, []string{"base.html", "day.html"}, "entry"
     })
   }
 
