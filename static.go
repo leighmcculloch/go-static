@@ -31,6 +31,8 @@ func NewStatic() *Static {
 		ServerPort: 4567,
 		TemplateFuncs: template.FuncMap{
 			"UnsafeHTML": unsafeHTML,
+			"ToLower":    strings.ToLower,
+			"ToUpper":    strings.ToUpper,
 		},
 		templates: make(map[string]*template.Template),
 		pages:     make(map[string]*Page),
