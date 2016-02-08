@@ -39,7 +39,7 @@ func NewStatic() *Static {
 	}
 }
 
-func (s *Static) Handle(path string, PageFunc PageFunc) {
+func (s *Static) Page(path string, PageFunc PageFunc) {
 	s.pages[path] = &Page{
 		Path: path,
 		Func: PageFunc,
