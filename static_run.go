@@ -1,8 +1,14 @@
 package static
 
 import (
+	"errors"
+	"fmt"
 	"log"
 	"os"
+)
+
+var (
+	ErrUnknownCommand = errors.New("Unknown command. Valid commands are: 'server', 'build'.")
 )
 
 const (
@@ -10,21 +16,29 @@ const (
 	RunCommandBuild  = "build"
 )
 
-func (s *Static) Run() {
+func (s *Static) Run() error {
 	command := RunCommandServer
 	if len(os.Args) >= 2 {
 		command = os.Args[1]
 	}
 
-	var err error
 	switch command {
 	case RunCommandBuild:
-		err = s.Build()
+		s.Build(logOutput)
+		return nil
 	case RunCommandServer:
-		err = s.ListenAndServe(":4567")
+		return s.ListenAndServe(":4567", logOutput)
 	}
 
-	if err != nil {
-		log.Fatal(err)
+	return ErrUnknownCommand
+}
+
+func logOutput(event Event) {
+	var s string
+	if event.Error == nil {
+		s = fmt.Sprintf("%10s  %-20s", event.Action, event.Path)
+	} else {
+		s = fmt.Sprintf("%10s  %-20s  %v", "error", event.Path, event.Error)
 	}
+	log.Println(s)
 }

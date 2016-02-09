@@ -6,16 +6,16 @@ import (
 	"fmt"
 	"html/template"
 	"io"
-	"log"
 	"os"
 	"path"
 	"strings"
 )
 
 type Static struct {
-	SourceDir  string
-	BuildDir   string
-	ServerPort int
+	SourceDir        string
+	BuildDir         string
+	BuildConcurrency int
+	ServerPort       int
 
 	TemplateFuncs template.FuncMap
 
@@ -25,9 +25,10 @@ type Static struct {
 
 func NewStatic() *Static {
 	return &Static{
-		SourceDir:  "source",
-		BuildDir:   "build",
-		ServerPort: 4567,
+		SourceDir:        "source",
+		BuildDir:         "build",
+		BuildConcurrency: 50,
+		ServerPort:       4567,
 		TemplateFuncs: template.FuncMap{
 			"UnsafeHTML": unsafeHTML,
 			"ToLower":    strings.ToLower,
@@ -59,7 +60,6 @@ func (s *Static) BuildPage(path string) error {
 var errNotFound = errors.New("No handler for path")
 
 func (s *Static) handleRequest(w io.Writer, path string, ignoreCache bool) error {
-	log.Printf(" => %s", path)
 	page := s.getPageForPath(path)
 	if page == nil {
 		return errNotFound
