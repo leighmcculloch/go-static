@@ -4,14 +4,14 @@ import (
 	"sync"
 )
 
-func (s *Static) buildPaths(paths <-chan string, buildEvents chan<- Event) {
+func (s Static) buildPaths(paths <-chan string, buildEvents chan<- Event) {
 	for path := range paths {
 		err := s.BuildPage(path)
 		buildEvents <- Event{Action: "build", Path: path, Error: err}
 	}
 }
 
-func (s *Static) Build(eventHandler EventHandler) error {
+func (s Static) Build(eventHandler EventHandler) error {
 	var wg sync.WaitGroup
 	var wgEventHandling sync.WaitGroup
 

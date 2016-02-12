@@ -16,7 +16,7 @@ const (
 	RunCommandBuild  = "build"
 )
 
-func (s *Static) Run() error {
+func (s Static) Run() error {
 	command := RunCommandServer
 	if len(os.Args) >= 2 {
 		command = os.Args[1]

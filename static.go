@@ -19,12 +19,16 @@ type Static struct {
 
 	TemplateFuncs template.FuncMap
 
+	*static
+}
+
+type static struct {
 	templates map[string]*template.Template
 	pages     map[string]*Page
 }
 
-func New() *Static {
-	return &Static{
+func New() Static {
+	return Static{
 		SourceDir:        "source",
 		BuildDir:         "build",
 		BuildConcurrency: 50,
@@ -34,19 +38,21 @@ func New() *Static {
 			"ToLower":    strings.ToLower,
 			"ToUpper":    strings.ToUpper,
 		},
-		templates: make(map[string]*template.Template),
-		pages:     make(map[string]*Page),
+		static: &static{
+			templates: make(map[string]*template.Template),
+			pages:     make(map[string]*Page),
+		},
 	}
 }
 
-func (s *Static) Page(path string, PageFunc PageFunc) {
+func (s Static) Page(path string, PageFunc PageFunc) {
 	s.pages[path] = &Page{
 		Path: path,
 		Func: PageFunc,
 	}
 }
 
-func (s *Static) BuildPage(path string) error {
+func (s Static) BuildPage(path string) error {
 	fp := fmt.Sprintf("%s%s", s.BuildDir, path)
 	f, err := os.Create(fp)
 	if err != nil {
@@ -59,7 +65,7 @@ func (s *Static) BuildPage(path string) error {
 
 var errNotFound = errors.New("No handler for path")
 
-func (s *Static) handleRequest(w io.Writer, path string, ignoreCache bool) error {
+func (s Static) handleRequest(w io.Writer, path string, ignoreCache bool) error {
 	page := s.getPageForPath(path)
 	if page == nil {
 		return errNotFound
@@ -69,11 +75,11 @@ func (s *Static) handleRequest(w io.Writer, path string, ignoreCache bool) error
 	return err
 }
 
-func (s *Static) getPageForPath(path string) *Page {
+func (s Static) getPageForPath(path string) *Page {
 	return s.pages[path]
 }
 
-func (s *Static) expandTemplatePaths(tmpl []string) []string {
+func (s Static) expandTemplatePaths(tmpl []string) []string {
 	expandedTmpl := make([]string, len(tmpl))
 	for i, t := range tmpl {
 		expandedTmpl[i] = s.templatePath(t)
@@ -89,7 +95,7 @@ func getTemplateCacheHash(tmpl []string) string {
 	return fmt.Sprintf("% x", h.Sum(nil))
 }
 
-func (s *Static) getTemplates(tmpl []string, ignoreCache bool) (*template.Template, error) {
+func (s Static) getTemplates(tmpl []string, ignoreCache bool) (*template.Template, error) {
 	var err error
 	tmpl = s.expandTemplatePaths(tmpl)
 	h := getTemplateCacheHash(tmpl)
@@ -99,7 +105,7 @@ func (s *Static) getTemplates(tmpl []string, ignoreCache bool) (*template.Templa
 	return s.templates[h], err
 }
 
-func (s *Static) writeResponse(w io.Writer, data interface{}, tmpls []string, tmpl string, ignoreCache bool) error {
+func (s Static) writeResponse(w io.Writer, data interface{}, tmpls []string, tmpl string, ignoreCache bool) error {
 	templates, err := s.getTemplates(tmpls, ignoreCache)
 	if err != nil {
 		return err
@@ -107,7 +113,7 @@ func (s *Static) writeResponse(w io.Writer, data interface{}, tmpls []string, tm
 	return templates.ExecuteTemplate(w, tmpl, data)
 }
 
-func (s *Static) templatePath(filename string) string {
+func (s Static) templatePath(filename string) string {
 	return path.Join(s.SourceDir, filename)
 }
 
