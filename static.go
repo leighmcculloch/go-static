@@ -45,10 +45,10 @@ func New() Static {
 	}
 }
 
-func (s Static) Page(path string, PageFunc PageFunc) {
+func (s Static) Page(path string, pageFunc PageFunc) {
 	s.pages[path] = &Page{
 		Path: path,
-		Func: PageFunc,
+		Func: pageFunc,
 	}
 }
 
