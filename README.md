@@ -34,6 +34,8 @@ go get github.com/leighmcculloch/static
     s.TemplateFuncs = template.FuncMap{...} // A map of functions available to templates
     ```
 
+    Default `TemplateFuncs` are: `UnsafeHTML`, `ToLower`, `ToUpper`.
+
 4. Call `Run`.
 
     ```go
