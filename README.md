@@ -13,7 +13,7 @@ go get github.com/leighmcculloch/static
 1. Create a `Static`
 
     ```go
-    s := static.NewStatic()
+    s := static.New()
     ```
 
 2. Define a handler for each page that returns a data model, list of templates, and the entry point template to load for the page. The function will be called when building the page and the data model will be given to the template specific as the last return value. Templates are looked for in the source directory.
@@ -56,7 +56,7 @@ import "github.com/leighmcculloch/static"
 const days = 365
 
 func main() {
-  s := static.NewStatic()
+  s := static.New()
 
   s.Handle("/index.html", func(path string) (interface{}, []string, string) {
     return days, []string{"base.html", "index.html"}, "entry"

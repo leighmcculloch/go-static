@@ -23,7 +23,7 @@ type Static struct {
 	pages     map[string]*Page
 }
 
-func NewStatic() *Static {
+func New() *Static {
 	return &Static{
 		SourceDir:        "source",
 		BuildDir:         "build",
