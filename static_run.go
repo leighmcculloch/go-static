@@ -27,7 +27,8 @@ func (s *Static) Run() error {
 		s.Build(logOutput)
 		return nil
 	case RunCommandServer:
-		return s.ListenAndServe(":4567", logOutput)
+		addr := fmt.Sprintf(":%d", s.ServerPort)
+		return s.ListenAndServe(addr, logOutput)
 	}
 
 	return ErrUnknownCommand
