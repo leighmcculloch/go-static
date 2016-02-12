@@ -24,17 +24,17 @@ func (s *Static) Run() error {
 
 	switch command {
 	case RunCommandBuild:
-		s.Build(logOutput)
+		s.Build(logEvent)
 		return nil
 	case RunCommandServer:
 		addr := fmt.Sprintf(":%d", s.ServerPort)
-		return s.ListenAndServe(addr, logOutput)
+		return s.ListenAndServe(addr, logEvent)
 	}
 
 	return ErrUnknownCommand
 }
 
-func logOutput(event Event) {
+func logEvent(event Event) {
 	var s string
 	if event.Error == nil {
 		s = fmt.Sprintf("%10s  %-20s", event.Action, event.Path)
