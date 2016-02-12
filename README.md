@@ -1,10 +1,10 @@
 # static
 
-A framework for generating static websites using Go and Go templates. It helps you use build static websites that are dynamically generated from sources like RSS feeds, databases, APIs, etc.
+A library for generating static websites using Go and Go templates. It helps you use build static websites that are dynamically generated from sources like RSS feeds, databases, APIs, etc.
 
 ## Status
 
-This framework was pulled out of a static website generated from Go. It's a work in progress towards being a standalone framework and is pretty not-configurable in it's current state.
+This library was pulled out of a static website generated from Go. It's a work in progress towards being a standalone framework and is pretty not-configurable in it's current state.
 
 ## Install
 
