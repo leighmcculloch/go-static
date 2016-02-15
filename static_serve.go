@@ -11,14 +11,14 @@ func (s *Static) ListenAndServe(addr string, eventHandler EventHandler) error {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		path := r.URL.Path
-		var filePath string
-		switch {
-		case strings.HasSuffix(path, "/"):
+
+		filePath := path
+		if strings.HasSuffix(path, "/") {
 			filePath = fmt.Sprintf("%sindex.html", path)
-		case !strings.HasSuffix(path, ".html"):
-			filePath = fmt.Sprintf("%s.html", path)
 		}
+
 		err := s.handleRequest(w, filePath, true)
+
 		if err == errNotFound {
 			fileServer.ServeHTTP(w, r)
 			eventHandler(Event{Action: "file", Path: path})
