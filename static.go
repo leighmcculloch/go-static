@@ -12,21 +12,29 @@ import (
 )
 
 type Static struct {
-	SourceDir        string
-	BuildDir         string
+	// The directory where templates can be found.
+	SourceDir string
+	// The directory where files will be written when building.
+	BuildDir string
+	// The number of files that will be built concurrently, default 50.
 	BuildConcurrency int
-	ServerPort       int
+	// The port served from when in serve mode, default 4567.
+	ServerPort int
 
+	// Functions available to templates.
 	TemplateFuncs template.FuncMap
 
 	*static
 }
 
 type static struct {
+	// Templates cached.
 	templates map[string]*template.Template
-	pages     map[string]*Page
+	// Pages registered.
+	pages map[string]*Page
 }
 
+// Create a new Static with defaults.
 func New() Static {
 	return Static{
 		SourceDir:        "source",
@@ -45,6 +53,7 @@ func New() Static {
 	}
 }
 
+// Register a page with a relative path and function to call when the page is served or built.
 func (s Static) Page(path string, pageFunc PageFunc) {
 	s.pages[path] = &Page{
 		Path: path,
