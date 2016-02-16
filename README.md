@@ -1,4 +1,4 @@
-# static
+# static [![Build Status](https://travis-ci.org/leighmcculloch/static.svg?branch=master)](https://travis-ci.org/leighmcculloch/static)
 
 A library for generating static websites using Go and Go templates. It helps you use build static websites that are dynamically generated from sources like RSS feeds, databases, APIs, etc.
 
