@@ -58,6 +58,6 @@ func (s Static) buildPage(path string) error {
 		return err
 	}
 	defer f.Close()
-	err = s.handleRequest(f, path, false)
+	err = s.handleRequest(f, path, true)
 	return err
 }

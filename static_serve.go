@@ -22,7 +22,7 @@ func (s *Static) serverHandleRequest(w http.ResponseWriter, r *http.Request, ev 
 		filePath = fmt.Sprintf("%sindex.html", path)
 	}
 
-	err := s.handleRequest(w, filePath, true)
+	err := s.handleRequest(w, filePath, false)
 
 	if err == errNotFound {
 		fileServer := http.FileServer(http.Dir(s.BuildDir))

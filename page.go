@@ -5,4 +5,4 @@ type Page struct {
 	Func PageFunc
 }
 
-type PageFunc func(path string) (data interface{}, tmpls []string, tmpl string)
+type PageFunc func(path string) (data interface{}, tmplPaths []string, tmpl string)

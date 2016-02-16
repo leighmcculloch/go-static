@@ -4,15 +4,6 @@ import (
 	"testing"
 )
 
-func TestFactoryDefaultSourceDir(t *testing.T) {
-	const want = "source"
-
-	got := New().SourceDir
-	if got != want {
-		t.Errorf("Expected default SourceDir to be %#v, but was %#v", want, got)
-	}
-}
-
 func TestFactoryDefaultBuildDir(t *testing.T) {
 	const want = "build"
 
