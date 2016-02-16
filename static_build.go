@@ -1,15 +1,10 @@
 package static
 
 import (
+	"fmt"
+	"os"
 	"sync"
 )
-
-func (s Static) buildPaths(paths <-chan string, buildEvents chan<- Event) {
-	for path := range paths {
-		err := s.BuildPage(path)
-		buildEvents <- Event{Action: "build", Path: path, Error: err}
-	}
-}
 
 func (s Static) Build(eventHandler EventHandler) error {
 	var wg sync.WaitGroup
@@ -47,4 +42,22 @@ func (s Static) Build(eventHandler EventHandler) error {
 	wgEventHandling.Wait()
 
 	return nil
+}
+
+func (s Static) buildPaths(paths <-chan string, buildEvents chan<- Event) {
+	for path := range paths {
+		err := s.buildPage(path)
+		buildEvents <- Event{Action: "build", Path: path, Error: err}
+	}
+}
+
+func (s Static) buildPage(path string) error {
+	fp := fmt.Sprintf("%s%s", s.BuildDir, path)
+	f, err := os.Create(fp)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	err = s.handleRequest(f, path, false)
+	return err
 }

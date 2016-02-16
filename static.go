@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"html/template"
 	"io"
-	"os"
 	"path"
 	"strings"
 )
@@ -59,17 +58,6 @@ func (s Static) Page(path string, pageFunc PageFunc) {
 		Path: path,
 		Func: pageFunc,
 	}
-}
-
-func (s Static) BuildPage(path string) error {
-	fp := fmt.Sprintf("%s%s", s.BuildDir, path)
-	f, err := os.Create(fp)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-	err = s.handleRequest(f, path, false)
-	return err
 }
 
 var errNotFound = errors.New("No handler for path")
