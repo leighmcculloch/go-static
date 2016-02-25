@@ -2,71 +2,61 @@ package static
 
 import (
 	"errors"
-	"html/template"
+	"fmt"
 	"io"
-	"strings"
+	"log"
+)
 
-	"github.com/leighmcculloch/static/templates"
+var (
+	ErrNotFound = errors.New("No page registered for path.")
 )
 
 type Static struct {
-	// The directory where files will be written when building.
-	BuildDir string
-	// The number of files that will be built concurrently, default 50.
-	BuildConcurrency int
-	// The port served from when in serve mode, default 4567.
-	ServerPort int
-
-	// Functions available to templates.
-	TemplateFuncs template.FuncMap
-
 	// Pages registered
-	pages map[string]*Page
-
-	// Templates registered
-	templates templates.Templates
+	Pages map[string]*Page
 }
 
 // Create a new Static with defaults.
 func New() Static {
-	defaultTemplateFuncs := template.FuncMap{
-		"UnsafeHTML": unsafeHTML,
-		"ToLower":    strings.ToLower,
-		"ToUpper":    strings.ToUpper,
-	}
 	return Static{
-		BuildDir:         "build",
-		BuildConcurrency: 50,
-		ServerPort:       4567,
-		TemplateFuncs:    defaultTemplateFuncs,
-		pages:            make(map[string]*Page),
-		templates:        templates.New(defaultTemplateFuncs),
+		Pages: make(map[string]*Page),
 	}
 }
 
 // Register a page with a relative path and function to call when the page is served or built.
-func (s Static) Page(path string, pageFunc PageFunc) {
-	s.pages[path] = &Page{
+func (s Static) AddPage(path string, pageFunc PageFunc) {
+	s.Pages[path] = &Page{
 		Path: path,
 		Func: pageFunc,
 	}
 }
 
-var errNotFound = errors.New("No handler for path")
+func (s Static) RenderEventHandler(r Renderer, ev EventHandler) error {
+	return r.Start(s, logEvent)
+}
 
-func (s Static) handleRequest(w io.Writer, path string, ignoreCache bool) error {
+func (s Static) Render(r Renderer) error {
+	return s.RenderEventHandler(r, logEvent)
+}
+
+func (s Static) WritePage(w io.Writer, path string, ignoreCache bool) error {
 	p := s.getPageForPath(path)
 	if p == nil {
-		return errNotFound
+		return ErrNotFound
 	}
-	data, tmplPaths, tmpl := p.Func(p.Path)
-	return s.templates.Render(w, data, tmplPaths, tmpl, ignoreCache)
+	return p.Func(w, p.Path)
 }
 
 func (s Static) getPageForPath(path string) *Page {
-	return s.pages[path]
+	return s.Pages[path]
 }
 
-func unsafeHTML(s string) template.HTML {
-	return template.HTML(s)
+func logEvent(event Event) {
+	var s string
+	if event.Error == nil {
+		s = fmt.Sprintf("%10s  %-20s", event.Action, event.Path)
+	} else {
+		s = fmt.Sprintf("%10s  %-20s  %v", "error", event.Path, event.Error)
+	}
+	log.Println(s)
 }
