@@ -27,7 +27,7 @@ func NewServer() Server {
 	}
 }
 
-func (v Server) Start(s static.Static, ev static.EventHandler) error {
+func (v Server) Render(s static.Static, ev static.EventHandler) error {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		v.WritePage(w, r, s, ev)

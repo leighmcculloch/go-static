@@ -32,7 +32,7 @@ func (s Static) AddPage(path string, pageFunc PageFunc) {
 }
 
 func (s Static) RenderEventHandler(r Renderer, ev EventHandler) error {
-	return r.Start(s, logEvent)
+	return r.Render(s, logEvent)
 }
 
 func (s Static) Render(r Renderer) error {

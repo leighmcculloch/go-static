@@ -27,7 +27,7 @@ func NewBuilder() Builder {
 	}
 }
 
-func (b Builder) Start(s static.Static, ev static.EventHandler) error {
+func (b Builder) Render(s static.Static, ev static.EventHandler) error {
 	var wg sync.WaitGroup
 	var wgEventHandling sync.WaitGroup
 
