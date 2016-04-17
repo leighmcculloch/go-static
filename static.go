@@ -23,11 +23,11 @@ func New() Static {
 	}
 }
 
-// Register a page with a relative path and function to call when the page is served or built.
-func (s Static) AddPage(path string, pageFunc PageFunc) {
+// Register a page with a relative path and function to call when the page is served or built that will write the page.
+func (s Static) AddPage(path string, writeFunc WriteFunc) {
 	s.Pages[path] = &Page{
-		Path: path,
-		Func: pageFunc,
+		Path:      path,
+		WriteFunc: writeFunc,
 	}
 }
 
@@ -44,7 +44,7 @@ func (s Static) WritePage(w io.Writer, path string, ignoreCache bool) error {
 	if p == nil {
 		return ErrNotFound
 	}
-	return p.Func(w, p.Path)
+	return p.WriteFunc(w, p.Path)
 }
 
 func (s Static) getPageForPath(path string) *Page {

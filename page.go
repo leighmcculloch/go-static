@@ -1,10 +1,6 @@
 package static
 
-import "io"
-
 type Page struct {
-	Path string
-	Func PageFunc
+	Path      string
+	WriteFunc WriteFunc
 }
-
-type PageFunc func(w io.Writer, path string) error
