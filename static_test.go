@@ -1,5 +1,0 @@
-package static
-
-import (
-	"testing"
-)

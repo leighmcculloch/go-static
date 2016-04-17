@@ -1,62 +1,57 @@
 package static
 
 import (
-	"errors"
-	"fmt"
-	"io"
-	"log"
+	"net/http"
+	"os"
+	"sync"
 )
 
-var (
-	ErrNotFound = errors.New("No page registered for path.")
-)
+func Build(o Options, h http.Handler, paths []string, eh EventHandler) error {
+	var wg sync.WaitGroup
 
-type Static struct {
-	// Pages registered
-	Pages map[string]*Page
+	pathsChan := make(chan string)
+
+	for i := 0; i < o.Concurrency; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			buildPaths(o, h, pathsChan, eh)
+		}()
+	}
+
+	for _, path := range paths {
+		pathsChan <- path
+	}
+
+	close(pathsChan)
+
+	wg.Wait()
+
+	return nil
 }
 
-// Create a new Static with defaults.
-func New() Static {
-	return Static{
-		Pages: make(map[string]*Page),
+func buildPaths(o Options, h http.Handler, paths <-chan string, eh EventHandler) {
+	for path := range paths {
+		err := buildPath(o, h, path)
+		eh(Event{Action: "build", Path: path, Error: err})
 	}
 }
 
-// Register a page with a relative path and function to call when the page is served or built that will write the page.
-func (s Static) AddPage(path string, writeFunc WriteFunc) {
-	s.Pages[path] = &Page{
-		Path:      path,
-		WriteFunc: writeFunc,
+func buildPath(o Options, h http.Handler, path string) error {
+	fp := o.OutputDir + path
+	f, err := os.Create(fp)
+	if err != nil {
+		return err
 	}
-}
+	defer f.Close()
 
-func (s Static) RenderEventHandler(r Renderer, ev EventHandler) error {
-	return r.Render(s, ev)
-}
-
-func (s Static) Render(r Renderer) error {
-	return s.RenderEventHandler(r, logEvent)
-}
-
-func (s Static) WritePage(w io.Writer, path string, ignoreCache bool) error {
-	p := s.getPageForPath(path)
-	if p == nil {
-		return ErrNotFound
+	r, err := http.NewRequest("GET", path, nil)
+	if err != nil {
+		return err
 	}
-	return p.WriteFunc(w, p.Path)
-}
+	rw := newResponseBuffer()
+	h.ServeHTTP(rw, r)
+	rw.WriteTo(f)
 
-func (s Static) getPageForPath(path string) *Page {
-	return s.Pages[path]
-}
-
-func logEvent(event Event) {
-	var s string
-	if event.Error == nil {
-		s = fmt.Sprintf("%10s  %-20s", event.Action, event.Path)
-	} else {
-		s = fmt.Sprintf("%10s  %-20s  %v", "error", event.Path, event.Error)
-	}
-	log.Println(s)
+	return nil
 }
