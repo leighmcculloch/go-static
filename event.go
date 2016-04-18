@@ -5,5 +5,3 @@ type Event struct {
 	Path   string
 	Error  error
 }
-
-type EventHandler func(event Event)
