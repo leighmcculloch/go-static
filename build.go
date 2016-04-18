@@ -37,7 +37,9 @@ func BuildOptions(o Options, h http.Handler, paths []string, eh EventHandler) er
 func buildPaths(o Options, h http.Handler, paths <-chan string, eh EventHandler) {
 	for path := range paths {
 		err := buildPath(o, h, path)
-		eh(Event{Action: "build", Path: path, Error: err})
+		if eh != nil {
+			eh(Event{Action: "build", Path: path, Error: err})
+		}
 	}
 }
 
