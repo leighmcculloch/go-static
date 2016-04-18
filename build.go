@@ -6,7 +6,11 @@ import (
 	"sync"
 )
 
-func Build(o Options, h http.Handler, paths []string, eh EventHandler) error {
+func Build(h http.Handler, paths []string, eh EventHandler) error {
+	return BuildOptions(NewOptions(), h, paths, eh)
+}
+
+func BuildOptions(o Options, h http.Handler, paths []string, eh EventHandler) error {
 	var wg sync.WaitGroup
 
 	pathsChan := make(chan string)
