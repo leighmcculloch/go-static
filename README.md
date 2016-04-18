@@ -10,11 +10,58 @@ go get github.com/leighmcculloch/static
 
 ## Usage
 
-Coming soon.
+### With defaults
+
+Call `Build` with a `http.Handler`, a `[]string` of paths to build to static files, and a callback for printing progress and errors which are communicated via events. The event handler can be `nil` but it's the only way you'll find out if there's an error building a path.
+
+```go
+static.Build(handler, paths, func (e static.Event) {
+  log.Println(e)
+})
+```
+
+### With more customization
+
+Call `BuildOptions` in the same way as `Build`, with an extra parameter `static.Options`.
 
 ## Simple Example
 
-Coming soon.
+Fire up the sample below. Running the Hello World web server is as you'd expect `go run *.go`, and then building the static version is as simple as `go run *.go -build`.
+
+```go
+package main
+
+import (
+  "net/http"
+  "github.com/leighmcculloch/static"
+)
+
+var build bool
+
+func init() {
+  flag.BoolVar(&build, "build", false, "Build the website to static files rather than run the web server.")
+  flag.Parse()
+}
+
+func main() {
+  handler := http.NewServeMux()
+  paths := []string{}
+
+  paths = append(paths, "/")
+  handler.HandleFunc("/", func(w http.ResponseWriter, r *http.Requests) {
+    fmt.Fprintf(w, "Hello %s!", r.URL.Path)
+  })
+
+  if build {
+    static.Build(handler, paths, func (e static.Event) {
+      log.Println(e)
+    })
+  } else {
+    s := &http.Server{Addr: ":8080", Handler: handler}
+    log.Fatal(s.ListenAndServe())
+  }
+}
+```
 
 ## Typical Example
 
