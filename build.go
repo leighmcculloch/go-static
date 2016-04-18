@@ -3,6 +3,7 @@ package static
 import (
 	"net/http"
 	"os"
+	"strings"
 	"sync"
 )
 
@@ -45,6 +46,10 @@ func buildPaths(o Options, h http.Handler, paths <-chan string, eh EventHandler)
 
 func buildPath(o Options, h http.Handler, path string) error {
 	fp := o.OutputDir + path
+	if strings.HasSuffix(fp, "/") {
+		fp += o.DirFilename
+	}
+
 	f, err := os.Create(fp)
 	if err != nil {
 		return err
