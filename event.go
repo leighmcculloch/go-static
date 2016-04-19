@@ -11,9 +11,9 @@ type Event struct {
 }
 
 func (e Event) String() string {
-	s := fmt.Sprintf("%10s  %-20s", e.Action, e.Path)
+	s := fmt.Sprintf("Action: %s, Path: %s", e.Action, e.Path)
 	if e.Error != nil {
-		s += fmt.Sprintf(" Error: %v", e.Error)
+		s += fmt.Sprintf(", Error: %v", e.Error)
 	}
 	return s
 }
