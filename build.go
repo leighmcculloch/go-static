@@ -60,9 +60,8 @@ func buildPath(o Options, h http.Handler, path string) error {
 	if err != nil {
 		return err
 	}
-	rw := newResponseBuffer()
+	rw := newResponseWriter(f)
 	h.ServeHTTP(&rw, r)
-	rw.WriteTo(f)
 
 	return nil
 }
