@@ -34,13 +34,13 @@ func TestResponseBufferWrite(t *testing.T) {
 
 	// Write adds to the internal buffer
 	{
-		before := responseBuffer.buffer.Bytes()
+		before := responseBuffer.Bytes()
 		t.Logf("buffer => %#v", before)
 
 		responseBuffer.Write([]byte{0x01, 0x02, 0x03, 0x04})
 		t.Logf("Write(%#v)", []byte{0x01, 0x02, 0x03, 0x04})
 
-		after := responseBuffer.buffer.Bytes()
+		after := responseBuffer.Bytes()
 		t.Logf("buffer => %#v", after)
 
 		expected := []byte{0x01, 0x02, 0x03, 0x04}
@@ -51,7 +51,7 @@ func TestResponseBufferWrite(t *testing.T) {
 
 	// Multiple writes build on the internal buffer
 	{
-		before := responseBuffer.buffer.Bytes()
+		before := responseBuffer.Bytes()
 		t.Logf("buffer => %#v", before)
 
 		responseBuffer.Write([]byte{0x05, 0x06})
@@ -59,7 +59,7 @@ func TestResponseBufferWrite(t *testing.T) {
 		responseBuffer.Write([]byte{0x07, 0x08})
 		t.Logf("Write(%#v)", []byte{0x07, 0x08})
 
-		after := responseBuffer.buffer.Bytes()
+		after := responseBuffer.Bytes()
 		t.Logf("buffer => %#v", after)
 
 		expected := []byte{0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08}
@@ -91,12 +91,12 @@ func TestResponseBufferWriteHeader(t *testing.T) {
 	// WriteHeader has no impact on the buffer
 	{
 		responseBuffer.Write([]byte("Hello World!"))
-		before := responseBuffer.buffer.Bytes()
+		before := responseBuffer.Bytes()
 		t.Logf("buffer => %#v", before)
 
 		responseBuffer.WriteHeader(200)
 		t.Logf("WriteHeader(200)")
-		after := responseBuffer.buffer.Bytes()
+		after := responseBuffer.Bytes()
 		t.Logf("buffer => %#v", after)
 
 		expected := []byte("Hello World!")
@@ -111,7 +111,7 @@ func TestResponseBufferWriteTo(t *testing.T) {
 
 	// No bytes written to the buffer, results in no bytes being written to
 	{
-		buffer := responseBuffer.buffer.Bytes()
+		buffer := responseBuffer.Bytes()
 		t.Logf("buffer => %#v", buffer)
 
 		writer := bytes.Buffer{}
@@ -129,7 +129,7 @@ func TestResponseBufferWriteTo(t *testing.T) {
 	// Bytes written to the buffer, can be written out to another
 	{
 		responseBuffer.Write([]byte{0x01, 0x02, 0x03, 0x04})
-		buffer := responseBuffer.buffer.Bytes()
+		buffer := responseBuffer.Bytes()
 		t.Logf("buffer => %#v", buffer)
 
 		writer := bytes.Buffer{}

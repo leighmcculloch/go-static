@@ -2,33 +2,24 @@ package static
 
 import (
 	"bytes"
-	"io"
 	"net/http"
 )
 
 type responseBuffer struct {
-	buffer *bytes.Buffer
+	bytes.Buffer
 	header http.Header
 }
 
 func newResponseBuffer() responseBuffer {
-	return responseBuffer{
-		buffer: new(bytes.Buffer),
-		header: make(map[string][]string),
-	}
+	return responseBuffer{}
 }
 
-func (rc responseBuffer) Header() http.Header {
+func (rc *responseBuffer) Header() http.Header {
+	if rc.header == nil {
+		rc.header = make(map[string][]string)
+	}
 	return rc.header
 }
 
-func (rc responseBuffer) Write(p []byte) (int, error) {
-	return rc.buffer.Write(p)
-}
-
-func (rc responseBuffer) WriteHeader(int) {
-}
-
-func (rc responseBuffer) WriteTo(w io.Writer) (n int64, err error) {
-	return rc.buffer.WriteTo(w)
+func (rc *responseBuffer) WriteHeader(int) {
 }
