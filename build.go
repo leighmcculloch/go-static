@@ -45,6 +45,14 @@ func buildPaths(o Options, h http.Handler, paths <-chan string, eh EventHandler)
 }
 
 func buildPath(o Options, h http.Handler, path string) error {
+	_, err := os.Stat(o.OutputDir)
+	if os.IsNotExist(err) {
+		err = os.MkdirAll(o.OutputDir, 0755)
+	}
+	if err != nil {
+		return err
+	}
+
 	fp := o.OutputDir + path
 	if strings.HasSuffix(fp, "/") {
 		fp += o.DirFilename
