@@ -14,7 +14,10 @@ type Event struct {
 	Error error
 }
 
-// A simple string representation of an error in the format: `Action: <action>, Path: <path>, Error: <error>`. Where the error portion is only included if an error occurred.
+// A simple string representation of an Event in the format:
+//	 Action: <action>, Path: <path>
+// And when the Event has an error:
+//	 Action: <action>, Path: <path>, Error: <error>
 func (e Event) String() string {
 	s := fmt.Sprintf("Action: %s, Path: %s", e.Action, e.Path)
 	if e.Error != nil {

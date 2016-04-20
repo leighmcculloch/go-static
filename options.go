@@ -10,7 +10,10 @@ type Options struct {
 	DirFilename string
 }
 
-// The default Options: OutputDir: "build", Concurrency: 50, DirFilename: "index.html".
+// The default Options:
+//   OutputDir:   "build"
+//   Concurrency: 50
+//   DirFilename: "index.html"
 func DefaultOptions() Options {
 	return Options{
 		OutputDir:   "build",
