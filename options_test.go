@@ -5,12 +5,12 @@ import (
 	"testing"
 )
 
-func TestNewOptions(t *testing.T) {
-	options := static.NewOptions()
+func TestDefaultOptions(t *testing.T) {
+	options := static.DefaultOptions()
 	expected := static.Options{OutputDir: "build", Concurrency: 50, DirFilename: "index.html"}
 
-	t.Logf("static.NewOptions() => %#v", options)
+	t.Logf("static.DefaultOptions() => %#v", options)
 	if options != expected {
-		t.Errorf("static.NewOptions() => %#v, want %#v", options, expected)
+		t.Errorf("static.DefaultOptions() => %#v, want %#v", options, expected)
 	}
 }

@@ -1,5 +1,6 @@
 package static
 
+// The options for configuring the behavior of the Build functions. Get the default options by calling DefaultOptions().
 type Options struct {
 	// The directory where files will be written when building, default "build".
 	OutputDir string
@@ -9,7 +10,8 @@ type Options struct {
 	DirFilename string
 }
 
-func NewOptions() Options {
+// The default Options.
+func DefaultOptions() Options {
 	return Options{
 		OutputDir:   "build",
 		Concurrency: 50,
