@@ -37,14 +37,14 @@ func BuildOptions(o Options, h http.Handler, paths []string, eh EventHandler) er
 
 func buildPaths(o Options, h http.Handler, paths <-chan string, eh EventHandler) {
 	for path := range paths {
-		err := buildPath(o, h, path)
+		err := BuildSingle(o, h, path)
 		if eh != nil {
 			eh(Event{Action: "build", Path: path, Error: err})
 		}
 	}
 }
 
-func buildPath(o Options, h http.Handler, path string) error {
+func BuildSingle(o Options, h http.Handler, path string) error {
 	_, err := os.Stat(o.OutputDir)
 	if os.IsNotExist(err) {
 		err = os.MkdirAll(o.OutputDir, 0755)
