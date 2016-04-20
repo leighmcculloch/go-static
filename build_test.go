@@ -28,3 +28,29 @@ func ExampleBuild() {
 	// Action: build, Path: /world
 	// Action: build, Path: /go
 }
+
+func ExampleBuildSingle() {
+	handler := http.NewServeMux()
+
+	handler.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintf(w, "Hello %s!", r.URL.Path)
+	})
+
+	options := static.DefaultOptions()
+
+	var err error
+
+	err = static.BuildSingle(options, handler, "/")
+	fmt.Println("Built: /, Error:", err)
+
+	err = static.BuildSingle(options, handler, "/world")
+	fmt.Println("Built: /world, Error:", err)
+
+	err = static.BuildSingle(options, handler, "/go")
+	fmt.Println("Built: /go, Error:", err)
+
+	// Output:
+	// Built: /, Error: <nil>
+	// Built: /world, Error: <nil>
+	// Built: /go, Error: <nil>
+}
