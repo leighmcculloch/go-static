@@ -14,9 +14,7 @@ func ExampleBuild() {
 		fmt.Fprintf(w, "Hello %s!", r.URL.Path)
 	})
 
-	paths = append(paths, "/")
 	paths = append(paths, "/world")
-	paths = append(paths, "/go")
 
 	options := static.DefaultOptions()
 	static.Build(options, handler, paths, func(e static.Event) {
@@ -24,9 +22,7 @@ func ExampleBuild() {
 	})
 
 	// Output:
-	// Action: build, Path: /
 	// Action: build, Path: /world
-	// Action: build, Path: /go
 }
 
 func ExampleBuildSingle() {
@@ -37,20 +33,9 @@ func ExampleBuildSingle() {
 	})
 
 	options := static.DefaultOptions()
-
-	var err error
-
-	err = static.BuildSingle(options, handler, "/")
-	fmt.Println("Built: /, Error:", err)
-
-	err = static.BuildSingle(options, handler, "/world")
+	err := static.BuildSingle(options, handler, "/world")
 	fmt.Println("Built: /world, Error:", err)
 
-	err = static.BuildSingle(options, handler, "/go")
-	fmt.Println("Built: /go, Error:", err)
-
 	// Output:
-	// Built: /, Error: <nil>
 	// Built: /world, Error: <nil>
-	// Built: /go, Error: <nil>
 }
