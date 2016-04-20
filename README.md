@@ -1,6 +1,12 @@
 # static [![Build Status](https://travis-ci.org/leighmcculloch/static.svg?branch=master)](https://travis-ci.org/leighmcculloch/static)
 
-A library for generating static websites from any Go web app that uses `net/http`. It helps you use build static websites that are dynamically generated from sources like RSS feeds, databases, APIs, etc by calling each handler registered and saving the output as files.
+A library for generating static websites from any Go web app that uses `net/http`.
+
+## Why
+
+Building static websites with existing frameworks like [middleman](https://github.com/middleman/middleman) is easy, but large websites can be slow. [hugo](https://github.com/spf13/hugo) is a popular option if you need to convert content using templates, but not if you have a go web app that you want to make static.
+
+[static](https://github.com/leighmcculloch/static) helps you use build static websites that are dynamically generated from sources like RSS feeds, databases, APIs, etc by calling each handler registered and saving the output as files.
 
 ## Install
 
@@ -81,9 +87,3 @@ func main() {
 ## Typical Example
 
 See [github.com/leighmcculloch/readprayrepeat.com](https://github.com/leighmcculloch/readprayrepeat.com).
-
-## Others
-
-Inspired by [middleman](https://middlemanapp.com/), which is a much easier to use and has many more features.
-
-If your static website needs don't require writing code, checkout [Hugo](https://gohugo.io).
