@@ -20,19 +20,18 @@ import "github.com/leighmcculloch/static"
 
 ## Usage
 
-### With defaults
-
 Call `Build` with a `http.Handler`, a `[]string` of paths to build to static files, and a callback for printing progress and errors which are communicated via events. The event handler can be `nil` but it's the only way you'll find out if there's an error building a path.
 
 ```go
-static.Build(handler, paths, func (e static.Event) {
+options := static.NewOptions()
+static.Build(options, handler, paths, func (e static.Event) {
   log.Println(e)
 })
 ```
 
-### With more customization
+## Options
 
-Call `BuildOptions` in the same way as `Build`, with an extra parameter `static.Options`.
+Instead of using the default `Options` you can define your own.
 
 ```go
 options := static.Options{
@@ -74,7 +73,8 @@ func main() {
   })
 
   if build {
-    static.Build(handler, paths, func (e static.Event) {
+    options := static.NewOptions()
+    static.Build(options, handler, paths, func (e static.Event) {
       log.Println(e)
     })
   } else {
