@@ -8,6 +8,10 @@ Building static websites with existing frameworks like [middleman](https://githu
 
 [static](https://github.com/leighmcculloch/static) helps you use build static websites that are dynamically generated from sources like RSS feeds, databases, APIs, etc by calling each handler registered and saving the output as files.
 
+## Go docs
+
+Get the go docs at: [godoc.org/github.com/leighmcculloch/static](https://godoc.org/github.com/leighmcculloch/static)
+
 ## Install
 
 ```bash
