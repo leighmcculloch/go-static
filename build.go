@@ -7,7 +7,7 @@ import (
 	"sync"
 )
 
-func Build(o Options, h http.Handler, paths []string, eh EventHandler) error {
+func Build(o Options, h http.Handler, paths []string, eh EventHandler) {
 	var wg sync.WaitGroup
 
 	pathsChan := make(chan string)
@@ -27,8 +27,6 @@ func Build(o Options, h http.Handler, paths []string, eh EventHandler) error {
 	close(pathsChan)
 
 	wg.Wait()
-
-	return nil
 }
 
 func buildPaths(o Options, h http.Handler, paths <-chan string, eh EventHandler) {
