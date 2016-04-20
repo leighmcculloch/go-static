@@ -24,6 +24,17 @@ static.Build(handler, paths, func (e static.Event) {
 
 Call `BuildOptions` in the same way as `Build`, with an extra parameter `static.Options`.
 
+```go
+options := static.Options{
+  OutputDir:   "build",
+  Concurrency: 50,
+  DirFilename: "index.html",
+}
+static.Build(options, handler, paths, func (e static.Event) {
+  log.Println(e)
+})
+```
+
 ## Simple Example
 
 Fire up the sample below. Running the Hello World web server is as you'd expect `go run *.go`, and then building the static version is as simple as `go run *.go -build`.
