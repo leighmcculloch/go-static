@@ -8,6 +8,10 @@ A library for generating static websites from any Go web app that uses `net/http
 go get github.com/leighmcculloch/static
 ```
 
+```go
+import "github.com/leighmcculloch/static"
+```
+
 ## Usage
 
 ### With defaults
