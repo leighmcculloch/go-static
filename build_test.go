@@ -50,10 +50,7 @@ func TestBuildSingle(t *testing.T) {
 	})
 
 	options := static.DefaultOptions()
-	tempDir, err := ioutil.TempDir("", "test_build_single")
-	if err != nil {
-		t.Fatalf("Error creating temp dir for OutputDir: %v", err)
-	}
+	tempDir, _ := ioutil.TempDir("", "test_build_single")
 	t.Logf("Created temp dir for OutputDir: %s", tempDir)
 	options.OutputDir = filepath.Join(tempDir, "build")
 	t.Logf("OutputDir: %s", options.OutputDir)
@@ -62,7 +59,7 @@ func TestBuildSingle(t *testing.T) {
 	expectedOutputFilePath := filepath.Join(options.OutputDir, "world")
 	expectedOutputFileContents := "Hello /world!"
 
-	err = static.BuildSingle(options, handler, path)
+	err := static.BuildSingle(options, handler, path)
 	t.Logf("BuildSingle(..., %#v) => %v", path, err)
 	if err != nil {
 		t.Errorf("BuildSingle(..., %#v) => %v, want nil", path, err)
@@ -86,11 +83,7 @@ func TestBuild(t *testing.T) {
 	})
 
 	options := static.DefaultOptions()
-	tempDir, err := ioutil.TempDir("", "test_build")
-	if err != nil {
-		t.Fatalf("Error creating temp dir for OutputDir: %v", err)
-	}
-	t.Logf("Created temp dir for OutputDir: %s", tempDir)
+	tempDir, _ := ioutil.TempDir("", "test_build")
 	options.OutputDir = filepath.Join(tempDir, "build")
 	t.Logf("OutputDir: %s", options.OutputDir)
 
@@ -149,10 +142,7 @@ func TestBuild_WithoutEventHandler(t *testing.T) {
 	})
 
 	options := static.DefaultOptions()
-	tempDir, err := ioutil.TempDir("", "test_build")
-	if err != nil {
-		t.Fatalf("Error creating temp dir for OutputDir: %v", err)
-	}
+	tempDir, _ := ioutil.TempDir("", "test_build")
 	t.Logf("Created temp dir for OutputDir: %s", tempDir)
 	options.OutputDir = filepath.Join(tempDir, "build")
 	t.Logf("OutputDir: %s", options.OutputDir)
