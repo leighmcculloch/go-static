@@ -142,7 +142,7 @@ func TestBuild_WithoutEventHandler(t *testing.T) {
 	})
 
 	options := static.DefaultOptions()
-	tempDir, _ := ioutil.TempDir("", "test_build")
+	tempDir, _ := ioutil.TempDir("", "test_build_without_event_handler")
 	t.Logf("Created temp dir for OutputDir: %s", tempDir)
 	options.OutputDir = filepath.Join(tempDir, "build")
 	t.Logf("OutputDir: %s", options.OutputDir)
