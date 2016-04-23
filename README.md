@@ -1,6 +1,6 @@
 # static [![Build Status](https://travis-ci.org/leighmcculloch/static.svg?branch=master)](https://travis-ci.org/leighmcculloch/static)
 
-A library for generating static websites from any Go web app that uses `net/http`.
+A package for generating static websites from any Go web app that uses `net/http`.
 
 ## Why
 
