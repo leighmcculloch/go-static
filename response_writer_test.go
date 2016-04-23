@@ -2,6 +2,7 @@ package static
 
 import (
 	"bytes"
+	"net/http"
 	"reflect"
 	"testing"
 )
@@ -10,73 +11,113 @@ func TestResponseWriterHeader(t *testing.T) {
 	writtenBuffer := bytes.Buffer{}
 	responseWriter := newResponseWriter(&writtenBuffer)
 
-	// Header returns a map of header keys to values, which can be mutated.
-	{
-		header := responseWriter.Header()
-		t.Logf("header => %#v", header)
-		header["Content-Type"] = []string{"text/html"}
-		t.Logf("header => %#v", header)
-	}
+	t.Log("Setting the Content-Type to text/html.")
+	header := responseWriter.Header()
+	header["Content-Type"] = []string{"text/html"}
+	t.Logf("Header => %#v", header)
 
-	// Mutations to the Header returned are persisted within responseWriter
+	t.Log("Expect Content-Type to be persisted.")
+	header_expected := http.Header{"Content-Type": []string{"text/html"}}
+	header = responseWriter.Header()
+	t.Logf("Header => %#v", header)
+	if !reflect.DeepEqual(header, header_expected) {
+		t.Errorf("Header => %#v, want %#v", header, header_expected)
+	}
+}
+
+func TestResponseWriterStatus(t *testing.T) {
+	writtenBuffer := bytes.Buffer{}
+	responseWriter := newResponseWriter(&writtenBuffer)
+
+	t.Log("Expect default Status to be 0.")
+	expectedStatus := 0
+	status := responseWriter.Status()
+	t.Logf("Status => %d", status)
+	if status != expectedStatus {
+		t.Logf("Status => %d, want %d", status, expectedStatus)
+	}
+}
+
+func TestResponseWriterStatusAfterWriteHeader(t *testing.T) {
+	writtenBuffer := bytes.Buffer{}
+	responseWriter := newResponseWriter(&writtenBuffer)
+
+	t.Log("When WriteHeader has been called with a status code.")
+	t.Log("Expect Status to be the status code.")
 	{
-		header := responseWriter.Header()
-		t.Logf("header => %#v", header)
-		content_type := header["Content-Type"]
-		content_type_expected := []string{"text/html"}
-		if !reflect.DeepEqual(content_type, content_type_expected) {
-			t.Errorf("header[\"Content-Type\"] => %#v, want %#v", content_type, content_type_expected)
+		expectedStatus := 404
+		responseWriter.WriteHeader(404)
+		t.Logf("WriteHeader(404)")
+		status := responseWriter.Status()
+		t.Logf("Status => %d", status)
+		if status != expectedStatus {
+			t.Logf("Status => %d, want %d", status, expectedStatus)
 		}
 	}
 
-	// Changes to Header have no impact on the what's written
+	t.Log("When WriteHeader has been called multiple times.")
+	t.Log("Expect Status to be the last status code.")
 	{
-		responseWriter.Write([]byte{0x01, 0x02, 0x03, 0x04})
-		t.Logf("Write(%#v)", []byte{0x01, 0x02, 0x03, 0x04})
-		written := writtenBuffer.Bytes()
-		t.Logf("written => %#v", written)
-
-		expected := []byte{0x01, 0x02, 0x03, 0x04}
-		if !bytes.Equal(written, expected) {
-			t.Errorf("written => %#v, want %#v", written, expected)
+		expectedStatus := 403
+		responseWriter.WriteHeader(403)
+		t.Logf("WriteHeader(403)")
+		status := responseWriter.Status()
+		t.Logf("Status => %d", status)
+		if status != expectedStatus {
+			t.Logf("Status => %d, want %d", status, expectedStatus)
 		}
 	}
 }
 
-func TestResponseWriterWriteHeader(t *testing.T) {
+func TestResponseWriterStatusAfterWrite(t *testing.T) {
 	writtenBuffer := bytes.Buffer{}
 	responseWriter := newResponseWriter(&writtenBuffer)
 
-	// WriteHeader is safe and doesn't panic
-	{
-		responseWriter.WriteHeader(200)
-		t.Logf("WriteHeader(200)")
+	t.Log("When Write has been called.")
+	t.Log("Expect Status to be 200 OK.")
+	expectedStatus := 200
+	responseWriter.Write([]byte{})
+	t.Logf("Write([]byte{})")
+	status := responseWriter.Status()
+	t.Logf("Status => %d", status)
+	if status != expectedStatus {
+		t.Logf("Status => %d, want %d", status, expectedStatus)
 	}
+}
 
-	// WriteHeader can be called multiple times with different values and doesn't panic
-	{
-		responseWriter.WriteHeader(200)
-		t.Logf("WriteHeader(200)")
-		responseWriter.WriteHeader(404)
-		t.Logf("WriteHeader(404)")
-		responseWriter.WriteHeader(500)
-		t.Logf("WriteHeader(500)")
+func TestResponseWriterStatusAfterWriteHeaderAndWrite(t *testing.T) {
+	writtenBuffer := bytes.Buffer{}
+	responseWriter := newResponseWriter(&writtenBuffer)
+
+	t.Log("When WriteHeader and Write have been called.")
+	t.Log("Expect Status to be the WriteHeader input.")
+	expectedStatus := 404
+	responseWriter.WriteHeader(404)
+	t.Logf("WriteHeader(404)")
+	responseWriter.Write([]byte{})
+	t.Logf("Write([]byte{})")
+	status := responseWriter.Status()
+	t.Logf("Status => %d", status)
+	if status != expectedStatus {
+		t.Logf("Status => %d, want %d", status, expectedStatus)
 	}
+}
 
-	// WriteHeader has no impact on the what's written
-	{
-		responseWriter.Write([]byte{0x01, 0x02, 0x03, 0x04})
-		t.Logf("Write(%#v)", []byte{0x01, 0x02, 0x03, 0x04})
+func TestResponseWriterStatusAfterWriteAndWriteHeader(t *testing.T) {
+	writtenBuffer := bytes.Buffer{}
+	responseWriter := newResponseWriter(&writtenBuffer)
 
-		responseWriter.WriteHeader(200)
-		t.Logf("WriteHeader(200)")
-		written := writtenBuffer.Bytes()
-		t.Logf("written => %#v", written)
-
-		expected := []byte{0x01, 0x02, 0x03, 0x04}
-		if !bytes.Equal(written, expected) {
-			t.Errorf("written => %#v, want %#v", written, expected)
-		}
+	t.Log("When Write and WriteHeader have been called.")
+	t.Log("Expect Status to be the WriteHeader input.")
+	expectedStatus := 404
+	responseWriter.Write([]byte{})
+	t.Logf("Write([]byte{})")
+	responseWriter.WriteHeader(404)
+	t.Logf("WriteHeader(404)")
+	status := responseWriter.Status()
+	t.Logf("Status => %d", status)
+	if status != expectedStatus {
+		t.Logf("Status => %d, want %d", status, expectedStatus)
 	}
 }
 
@@ -84,18 +125,19 @@ func TestResponseWriterWrite(t *testing.T) {
 	writtenBuffer := bytes.Buffer{}
 	responseWriter := newResponseWriter(&writtenBuffer)
 
-	// No bytes written to the buffer, results in no bytes being written to
+	t.Log("When nothing has been written to the responseWriter.")
+	t.Log("Expect nothing will be written to the Writer.")
 	{
+		expected := []byte{}
 		written := writtenBuffer.Bytes()
 		t.Logf("written => %#v", written)
-
-		expected := []byte{}
 		if !bytes.Equal(written, expected) {
 			t.Errorf("written => %#v, want %#v", written, expected)
 		}
 	}
 
-	// Bytes written to the responseWriter, are written out to the writer
+	t.Log("When bytes are written to the responseWriter.")
+	t.Log("The bytes will be written to the Writer.")
 	{
 		responseWriter.Write([]byte{0x01, 0x02, 0x03, 0x04})
 
@@ -108,7 +150,8 @@ func TestResponseWriterWrite(t *testing.T) {
 		}
 	}
 
-	// Bytes written to the responseWriter in parts, are written out to the writer
+	t.Log("When additional bytes are written to the responseWriter.")
+	t.Log("The additional bytes will be written to the Writer.")
 	{
 		responseWriter.Write([]byte{0x05, 0x06})
 		t.Logf("Write(%#v)", []byte{0x05, 0x06})
