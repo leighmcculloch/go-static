@@ -47,7 +47,7 @@ func ExampleBuildSingle() {
 func TestBuildSingle(t *testing.T) {
 	t.Log("When a Handler is defined to respond to /* and response with Hello <path>!")
 	handler := http.NewServeMux()
-	handler.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	handler.HandleFunc("/hello/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Hello %s!", path.Base(r.URL.Path))
 	})
 
@@ -57,11 +57,11 @@ func TestBuildSingle(t *testing.T) {
 	options.OutputDir = filepath.Join(tempDir, "build")
 	t.Logf("OutputDir => %s", options.OutputDir)
 
-	t.Log("And the path to build is /world.")
-	path := "/world"
+	t.Log("And the path to build is /hello/world.")
+	path := "/hello/world"
 
-	t.Log("Expect BuildSingle to create the OutputDir, write a file world with contents Hello world! And return no error.")
-	expectedOutputFilePath := filepath.Join(options.OutputDir, "world")
+	t.Log("Expect BuildSingle to create the output path and write a file world with contents Hello world! And return no error.")
+	expectedOutputFilePath := filepath.Join(options.OutputDir, "hello", "world")
 	expectedOutputFileContents := "Hello world!"
 
 	err := static.BuildSingle(options, handler, path)
@@ -84,7 +84,7 @@ func TestBuildSingle(t *testing.T) {
 func TestBuild(t *testing.T) {
 	t.Log("When a Handler is defined to respond to /* and response with Hello <path>!")
 	handler := http.NewServeMux()
-	handler.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	handler.HandleFunc("/hello/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Hello %s!", path.Base(r.URL.Path))
 	})
 
@@ -95,28 +95,32 @@ func TestBuild(t *testing.T) {
 	t.Logf("OutputDir: %s", options.OutputDir)
 
 	t.Log("And there are multiple paths to build.")
-	paths := []string{"/go", "/world", "/universe"}
+	paths := []string{
+		"/hello/go",
+		"/hello/world",
+		"/hello/universe",
+	}
 
-	t.Log("Expect Build to create the OutputDir, write a file for each path with contents Hello <file>! And send one event per path to the EventHandler containing no error.")
+	t.Log("Expect Build to create the output path and write a file for each path with contents Hello <file>! And send one event per path to the EventHandler containing no error.")
 	expected := []struct {
 		OutputFilePath     string
 		OutputFileContents string
 		Event              static.Event
 	}{
 		{
-			filepath.Join(options.OutputDir, "go"),
+			filepath.Join(options.OutputDir, "hello", "go"),
 			"Hello go!",
-			static.Event{"build", "/go", nil},
+			static.Event{"build", "/hello/go", nil},
 		},
 		{
-			filepath.Join(options.OutputDir, "world"),
+			filepath.Join(options.OutputDir, "hello", "world"),
 			"Hello world!",
-			static.Event{"build", "/world", nil},
+			static.Event{"build", "/hello/world", nil},
 		},
 		{
-			filepath.Join(options.OutputDir, "universe"),
+			filepath.Join(options.OutputDir, "hello", "universe"),
 			"Hello universe!",
-			static.Event{"build", "/universe", nil},
+			static.Event{"build", "/hello/universe", nil},
 		},
 	}
 
@@ -166,7 +170,7 @@ func TestBuild(t *testing.T) {
 func TestBuildWithNilEventHandler(t *testing.T) {
 	t.Log("When a Handler is defined to respond to /* and response with Hello <path>!")
 	handler := http.NewServeMux()
-	handler.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	handler.HandleFunc("/hello/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Hello %s!", path.Base(r.URL.Path))
 	})
 
@@ -177,16 +181,29 @@ func TestBuildWithNilEventHandler(t *testing.T) {
 	t.Logf("OutputDir: %s", options.OutputDir)
 
 	t.Log("And there are multiple paths to build.")
-	paths := []string{"/go", "/world", "/universe"}
+	paths := []string{
+		"/hello/go",
+		"/hello/world",
+		"/hello/universe",
+	}
 
-	t.Log("Expect Build to create the OutputDir, write a file for each path with contents Hello <file>!")
+	t.Log("Expect Build to create the output path and write a file for each path with contents Hello <file>! And send one event per path to the EventHandler containing no error.")
 	expected := []struct {
 		OutputFilePath     string
 		OutputFileContents string
 	}{
-		{filepath.Join(options.OutputDir, "go"), "Hello go!"},
-		{filepath.Join(options.OutputDir, "world"), "Hello world!"},
-		{filepath.Join(options.OutputDir, "universe"), "Hello universe!"},
+		{
+			filepath.Join(options.OutputDir, "hello", "go"),
+			"Hello go!",
+		},
+		{
+			filepath.Join(options.OutputDir, "hello", "world"),
+			"Hello world!",
+		},
+		{
+			filepath.Join(options.OutputDir, "hello", "universe"),
+			"Hello universe!",
+		},
 	}
 
 	static.Build(options, handler, paths, nil)
