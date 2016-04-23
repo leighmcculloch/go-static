@@ -33,15 +33,15 @@ func Build(o Options, h http.Handler, paths []string, eh EventHandler) {
 
 func buildWorker(o Options, h http.Handler, paths <-chan string, eh EventHandler) {
 	for path := range paths {
-		err := BuildSingle(o, h, path)
+		status, err := BuildSingle(o, h, path)
 		if eh != nil {
-			eh(Event{Action: "build", Path: path, Error: err})
+			eh(Event{Action: "build", StatusCode: status, Path: path, Error: err})
 		}
 	}
 }
 
-// Build a single path. Uses the http.Handler to get the response for each path, and writes that response to a file with it's respective path in the OutputDir specified in the Options. Returns an error if one occurs.
-func BuildSingle(o Options, h http.Handler, path string) error {
+// Build a single path. Uses the http.Handler to get the response for each path, and writes that response to a file with it's respective path in the OutputDir specified in the Options. Returns the HTTP status code return and an error if one occurs.
+func BuildSingle(o Options, h http.Handler, path string) (int, error) {
 	fp := o.OutputDir + path
 	if strings.HasSuffix(fp, "/") {
 		fp += o.DirFilename
@@ -53,21 +53,21 @@ func BuildSingle(o Options, h http.Handler, path string) error {
 		err = os.MkdirAll(dp, 0755)
 	}
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	f, err := os.Create(fp)
 	if err != nil {
-		return err
+		return 0, err
 	}
 	defer f.Close()
 
 	r, err := http.NewRequest("GET", path, nil)
 	if err != nil {
-		return err
+		return 0, err
 	}
 	rw := newResponseWriter(f)
 	h.ServeHTTP(&rw, r)
 
-	return nil
+	return rw.Status(), nil
 }
