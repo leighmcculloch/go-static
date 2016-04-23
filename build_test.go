@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"path"
 	"path/filepath"
 	"testing"
 )
@@ -14,7 +15,7 @@ func ExampleBuild() {
 	paths := []string{}
 
 	handler.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Hello %s!", r.URL.Path)
+		fmt.Fprintf(w, "Hello %s!", path.Base(r.URL.Path))
 	})
 
 	paths = append(paths, "/world")
@@ -32,7 +33,7 @@ func ExampleBuildSingle() {
 	handler := http.NewServeMux()
 
 	handler.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Hello %s!", r.URL.Path)
+		fmt.Fprintf(w, "Hello %s!", path.Base(r.URL.Path))
 	})
 
 	options := static.DefaultOptions()
@@ -46,7 +47,7 @@ func ExampleBuildSingle() {
 func TestBuildSingle(t *testing.T) {
 	handler := http.NewServeMux()
 	handler.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Hello %s!", r.URL.Path)
+		fmt.Fprintf(w, "Hello %s!", path.Base(r.URL.Path))
 	})
 
 	options := static.DefaultOptions()
@@ -57,7 +58,7 @@ func TestBuildSingle(t *testing.T) {
 
 	path := "/world"
 	expectedOutputFilePath := filepath.Join(options.OutputDir, "world")
-	expectedOutputFileContents := "Hello /world!"
+	expectedOutputFileContents := "Hello world!"
 
 	err := static.BuildSingle(options, handler, path)
 	t.Logf("BuildSingle(..., %#v) => %v", path, err)
@@ -79,7 +80,7 @@ func TestBuildSingle(t *testing.T) {
 func TestBuild(t *testing.T) {
 	handler := http.NewServeMux()
 	handler.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Hello %s!", r.URL.Path)
+		fmt.Fprintf(w, "Hello %s!", path.Base(r.URL.Path))
 	})
 
 	options := static.DefaultOptions()
@@ -93,9 +94,9 @@ func TestBuild(t *testing.T) {
 		OutputFileContents string
 		Event              static.Event
 	}{
-		{filepath.Join(options.OutputDir, "go"), "Hello /go!", static.Event{"build", "/go", nil}},
-		{filepath.Join(options.OutputDir, "world"), "Hello /world!", static.Event{"build", "/world", nil}},
-		{filepath.Join(options.OutputDir, "universe"), "Hello /universe!", static.Event{"build", "/universe", nil}},
+		{filepath.Join(options.OutputDir, "go"), "Hello go!", static.Event{"build", "/go", nil}},
+		{filepath.Join(options.OutputDir, "world"), "Hello world!", static.Event{"build", "/world", nil}},
+		{filepath.Join(options.OutputDir, "universe"), "Hello universe!", static.Event{"build", "/universe", nil}},
 	}
 
 	expectedNumberOfEvents := len(paths)
@@ -138,7 +139,7 @@ func TestBuild(t *testing.T) {
 func TestBuild_WithoutEventHandler(t *testing.T) {
 	handler := http.NewServeMux()
 	handler.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Hello %s!", r.URL.Path)
+		fmt.Fprintf(w, "Hello %s!", path.Base(r.URL.Path))
 	})
 
 	options := static.DefaultOptions()
@@ -152,9 +153,9 @@ func TestBuild_WithoutEventHandler(t *testing.T) {
 		OutputFilePath     string
 		OutputFileContents string
 	}{
-		{filepath.Join(options.OutputDir, "go"), "Hello /go!"},
-		{filepath.Join(options.OutputDir, "world"), "Hello /world!"},
-		{filepath.Join(options.OutputDir, "universe"), "Hello /universe!"},
+		{filepath.Join(options.OutputDir, "go"), "Hello go!"},
+		{filepath.Join(options.OutputDir, "world"), "Hello world!"},
+		{filepath.Join(options.OutputDir, "universe"), "Hello universe!"},
 	}
 
 	static.Build(options, handler, paths, nil)
