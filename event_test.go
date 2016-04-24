@@ -1,19 +1,18 @@
-package static_test
+package static
 
 import (
-	"."
 	"errors"
 	"testing"
 )
 
 func TestString(t *testing.T) {
 	tests := []struct {
-		event    static.Event
+		event    Event
 		expected string
 	}{
-		{static.Event{Action: "action", StatusCode: 200, Path: "/path"}, "Action: action, StatusCode: 200, Path: /path"},
-		{static.Event{Action: "action", StatusCode: 404, Path: "/path"}, "Action: action, StatusCode: 404, Path: /path"},
-		{static.Event{Action: "action", StatusCode: 200, Path: "/path", Error: errors.New("error")}, "Action: action, StatusCode: 200, Path: /path, Error: error"},
+		{Event{Action: "action", StatusCode: 200, Path: "/path"}, "Action: action, StatusCode: 200, Path: /path"},
+		{Event{Action: "action", StatusCode: 404, Path: "/path"}, "Action: action, StatusCode: 404, Path: /path"},
+		{Event{Action: "action", StatusCode: 200, Path: "/path", Error: errors.New("error")}, "Action: action, StatusCode: 200, Path: /path, Error: error"},
 	}
 
 	for _, test := range tests {

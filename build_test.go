@@ -1,7 +1,6 @@
-package static_test
+package static
 
 import (
-	"."
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -22,8 +21,8 @@ func ExampleBuild() {
 
 	paths = append(paths, "/world")
 
-	options := static.DefaultOptions()
-	static.Build(options, handler, paths, func(e static.Event) {
+	options := DefaultOptions()
+	Build(options, handler, paths, func(e Event) {
 		fmt.Println(e)
 	})
 
@@ -38,8 +37,8 @@ func ExampleBuildSingle() {
 		fmt.Fprintf(w, "Hello %s!", path.Base(r.URL.Path))
 	})
 
-	options := static.DefaultOptions()
-	status, err := static.BuildSingle(options, handler, "/world")
+	options := DefaultOptions()
+	status, err := BuildSingle(options, handler, "/world")
 	fmt.Printf("Built: /world, StatusCode: %d, Error: %v", status, err)
 
 	// Output:
@@ -54,7 +53,7 @@ func TestBuildSingle(t *testing.T) {
 	})
 
 	t.Log("And Options are defined with defaults and an OutputDir that does not exist.")
-	options := static.DefaultOptions()
+	options := DefaultOptions()
 	tempDir, _ := ioutil.TempDir("", "")
 	options.OutputDir = filepath.Join(tempDir, "build")
 	t.Logf("OutputDir => %s", options.OutputDir)
@@ -67,7 +66,7 @@ func TestBuildSingle(t *testing.T) {
 	expectedOutputFilePath := filepath.Join(options.OutputDir, "hello", "world")
 	expectedOutputFileContents := "Hello world!"
 
-	status, err := static.BuildSingle(options, handler, path)
+	status, err := BuildSingle(options, handler, path)
 	t.Logf("BuildSingle(%#v) => %v, %v", path, status, err)
 	if status != expectedStatus || err != nil {
 		t.Errorf("BuildSingle(%#v) => %v, %v, expected %v, nil", path, status, err, expectedStatus)
@@ -92,7 +91,7 @@ func TestBuildSingleErrors(t *testing.T) {
 	})
 
 	t.Log("And Options are defined with defaults and an OutputDir.")
-	options := static.DefaultOptions()
+	options := DefaultOptions()
 	tempDir, _ := ioutil.TempDir("", "")
 	options.OutputDir = filepath.Join(tempDir, "build")
 	t.Logf("OutputDir => %s", options.OutputDir)
@@ -108,7 +107,7 @@ func TestBuildSingleErrors(t *testing.T) {
 
 	expectedStatus := 0
 	expectedErrString := "not a directory"
-	status, err := static.BuildSingle(options, handler, path)
+	status, err := BuildSingle(options, handler, path)
 	if err != nil && strings.Contains(err.Error(), expectedErrString) {
 		t.Logf("BuildSingle(%#v) => %v, %v", path, status, err)
 	} else {
@@ -124,7 +123,7 @@ func TestBuild(t *testing.T) {
 	})
 
 	t.Log("And Options are defined with defaults and an OutputDir that does not exist.")
-	options := static.DefaultOptions()
+	options := DefaultOptions()
 	tempDir, _ := ioutil.TempDir("", "")
 	options.OutputDir = filepath.Join(tempDir, "build")
 	t.Logf("OutputDir: %s", options.OutputDir)
@@ -141,34 +140,34 @@ func TestBuild(t *testing.T) {
 	expected := []struct {
 		OutputFilePath     string
 		OutputFileContents string
-		Event              static.Event
+		Event              Event
 	}{
 		{
 			filepath.Join(options.OutputDir, "hello", "go"),
 			"Hello go!",
-			static.Event{"build", 200, "/hello/go", nil},
+			Event{"build", 200, "/hello/go", nil},
 		},
 		{
 			filepath.Join(options.OutputDir, "hello", "world"),
 			"Hello world!",
-			static.Event{"build", 200, "/hello/world", nil},
+			Event{"build", 200, "/hello/world", nil},
 		},
 		{
 			filepath.Join(options.OutputDir, "hello", "universe"),
 			"Hello universe!",
-			static.Event{"build", 200, "/hello/universe", nil},
+			Event{"build", 200, "/hello/universe", nil},
 		},
 		{
 			filepath.Join(options.OutputDir, "bye"),
 			"404 page not found\n",
-			static.Event{"build", 404, "/bye", nil},
+			Event{"build", 404, "/bye", nil},
 		},
 	}
 
 	expectedNumberOfEvents := len(paths)
 	numberOfEvents := 0
-	events := make(chan static.Event, expectedNumberOfEvents)
-	static.Build(options, handler, paths, func(e static.Event) {
+	events := make(chan Event, expectedNumberOfEvents)
+	Build(options, handler, paths, func(e Event) {
 		select {
 		case events <- e:
 			t.Logf("Event received => %#v", e)
@@ -182,7 +181,7 @@ func TestBuild(t *testing.T) {
 		t.Errorf("Number of events received => %d, expected %d", numberOfEvents, expectedNumberOfEvents)
 	}
 
-	eventsSeen := make(map[static.Event]bool)
+	eventsSeen := make(map[Event]bool)
 	for event := range events {
 		if eventsSeen[event] {
 			t.Errorf("Event received => %#v, multiple times but was expected once.", event)
@@ -216,7 +215,7 @@ func TestBuildErrors(t *testing.T) {
 	})
 
 	t.Log("And Options are defined with defaults and an OutputDir that does not exist.")
-	options := static.DefaultOptions()
+	options := DefaultOptions()
 	tempDir, _ := ioutil.TempDir("", "")
 	options.OutputDir = filepath.Join(tempDir, "build")
 	t.Logf("OutputDir: %s", options.OutputDir)
@@ -236,8 +235,8 @@ func TestBuildErrors(t *testing.T) {
 
 	expectedNumberOfEvents := len(paths)
 	numberOfEvents := 0
-	events := make(chan static.Event, expectedNumberOfEvents)
-	static.Build(options, handler, paths, func(e static.Event) {
+	events := make(chan Event, expectedNumberOfEvents)
+	Build(options, handler, paths, func(e Event) {
 		select {
 		case events <- e:
 			t.Logf("Event received => %#v", e)
@@ -251,7 +250,7 @@ func TestBuildErrors(t *testing.T) {
 		t.Errorf("Number of events received => %d, expected %d", numberOfEvents, expectedNumberOfEvents)
 	}
 
-	eventsSeen := make(map[string]*static.Event)
+	eventsSeen := make(map[string]*Event)
 	for event := range events {
 		storeEvent := event
 		if eventsSeen[event.Path] != nil {
@@ -292,7 +291,7 @@ func TestBuildWithNilEventHandler(t *testing.T) {
 	})
 
 	t.Log("And Options are defined with defaults and an OutputDir that does not exist.")
-	options := static.DefaultOptions()
+	options := DefaultOptions()
 	tempDir, _ := ioutil.TempDir("", "")
 	options.OutputDir = filepath.Join(tempDir, "build")
 	t.Logf("OutputDir: %s", options.OutputDir)
@@ -323,7 +322,7 @@ func TestBuildWithNilEventHandler(t *testing.T) {
 		},
 	}
 
-	static.Build(options, handler, paths, nil)
+	Build(options, handler, paths, nil)
 
 	for _, expect := range expected {
 		outputFileContents, err := ioutil.ReadFile(expect.OutputFilePath)
