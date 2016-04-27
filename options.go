@@ -1,6 +1,6 @@
 package static
 
-// The options for configuring the behavior of the Build functions. Get the default options by calling DefaultOptions().
+// The options for configuring the behavior of the Build functions. Get the default options with DefaultOptions.
 type Options struct {
 	// The directory where files will be written when building.
 	OutputDir string
@@ -10,14 +10,9 @@ type Options struct {
 	DirFilename string
 }
 
-// The default Options:
-//   OutputDir:   "build"
-//   Concurrency: 50
-//   DirFilename: "index.html"
-func DefaultOptions() Options {
-	return Options{
-		OutputDir:   "build",
-		Concurrency: 50,
-		DirFilename: "index.html",
-	}
+// The default recommended Options
+var DefaultOptions = Options{
+	OutputDir:   "build",
+	Concurrency: 50,
+	DirFilename: "index.html",
 }

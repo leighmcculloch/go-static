@@ -27,7 +27,7 @@ import "github.com/leighmcculloch/static"
 Call `Build` with a `http.Handler`, a `[]string` of paths to build to static files, and a callback for printing progress and errors which are communicated via events. The event handler can be `nil` but it's the only way you'll find out if there's an error building a path.
 
 ```go
-options := static.DefaultOptions()
+options := static.DefaultOptions
 static.Build(options, handler, paths, func (e static.Event) {
   log.Println(e)
 })
@@ -77,7 +77,7 @@ func main() {
   })
 
   if build {
-    options := static.DefaultOptions()
+    options := static.DefaultOptions
     static.Build(options, handler, paths, func (e static.Event) {
       log.Println(e)
     })

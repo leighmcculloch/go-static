@@ -21,8 +21,7 @@ func ExampleBuild() {
 
 	paths = append(paths, "/world")
 
-	options := DefaultOptions()
-	Build(options, handler, paths, func(e Event) {
+	Build(DefaultOptions, handler, paths, func(e Event) {
 		fmt.Println(e)
 	})
 
@@ -37,8 +36,7 @@ func ExampleBuildSingle() {
 		fmt.Fprintf(w, "Hello %s!", path.Base(r.URL.Path))
 	})
 
-	options := DefaultOptions()
-	status, err := BuildSingle(options, handler, "/world")
+	status, err := BuildSingle(DefaultOptions, handler, "/world")
 	fmt.Printf("Built: /world, StatusCode: %d, Error: %v", status, err)
 
 	// Output:
@@ -53,7 +51,7 @@ func TestBuildSingle(t *testing.T) {
 	})
 
 	t.Log("And Options are defined with defaults and an OutputDir that does not exist.")
-	options := DefaultOptions()
+	options := DefaultOptions
 	tempDir, _ := ioutil.TempDir("", "")
 	options.OutputDir = filepath.Join(tempDir, "build")
 	t.Logf("OutputDir => %s", options.OutputDir)
@@ -91,7 +89,7 @@ func TestBuildSingleErrors(t *testing.T) {
 	})
 
 	t.Log("And Options are defined with defaults and an OutputDir.")
-	options := DefaultOptions()
+	options := DefaultOptions
 	tempDir, _ := ioutil.TempDir("", "")
 	options.OutputDir = filepath.Join(tempDir, "build")
 	t.Logf("OutputDir => %s", options.OutputDir)
@@ -123,7 +121,7 @@ func TestBuild(t *testing.T) {
 	})
 
 	t.Log("And Options are defined with defaults and an OutputDir that does not exist.")
-	options := DefaultOptions()
+	options := DefaultOptions
 	tempDir, _ := ioutil.TempDir("", "")
 	options.OutputDir = filepath.Join(tempDir, "build")
 	t.Logf("OutputDir: %s", options.OutputDir)
@@ -215,7 +213,7 @@ func TestBuildErrors(t *testing.T) {
 	})
 
 	t.Log("And Options are defined with defaults and an OutputDir that does not exist.")
-	options := DefaultOptions()
+	options := DefaultOptions
 	tempDir, _ := ioutil.TempDir("", "")
 	options.OutputDir = filepath.Join(tempDir, "build")
 	t.Logf("OutputDir: %s", options.OutputDir)
@@ -291,7 +289,7 @@ func TestBuildWithNilEventHandler(t *testing.T) {
 	})
 
 	t.Log("And Options are defined with defaults and an OutputDir that does not exist.")
-	options := DefaultOptions()
+	options := DefaultOptions
 	tempDir, _ := ioutil.TempDir("", "")
 	options.OutputDir = filepath.Join(tempDir, "build")
 	t.Logf("OutputDir: %s", options.OutputDir)
