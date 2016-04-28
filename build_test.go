@@ -81,6 +81,46 @@ func TestBuildSingle(t *testing.T) {
 	}
 }
 
+func TestBuildSingleDirFilename(t *testing.T) {
+	t.Log("When a Handler is defined to respond to /* and responds with Hello directory!")
+	handler := http.NewServeMux()
+	handler.HandleFunc("/hello/", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintf(w, "Hello directory!")
+	})
+
+	t.Log("And Options are defined with defaults and an OutputDir that does not exist.")
+	options := DefaultOptions
+	tempDir, _ := ioutil.TempDir("", "")
+	options.OutputDir = filepath.Join(tempDir, "build")
+	t.Logf("OutputDir => %s", options.OutputDir)
+
+	t.Log("And Options are defined with the default DirFilename of index.html.")
+
+	t.Log("And the path to build is the directory path /hello/.")
+	path := "/hello/"
+
+	t.Log("Expect BuildSingle to create the default DirFilename at the output path with contents Hello directory! And return no error.")
+	expectedStatus := 200
+	expectedOutputFilePath := filepath.Join(options.OutputDir, "hello", "index.html")
+	expectedOutputFileContents := "Hello directory!"
+
+	status, err := BuildSingle(options, handler, path)
+	t.Logf("BuildSingle(%#v) => %v, %v", path, status, err)
+	if status != expectedStatus || err != nil {
+		t.Errorf("BuildSingle(%#v) => %v, %v, expected %v, nil", path, status, err, expectedStatus)
+	}
+
+	outputFileContents, err := ioutil.ReadFile(expectedOutputFilePath)
+	if err != nil {
+		t.Fatalf("Expected %s to exist with the output but got error when opening: %v", expectedOutputFilePath, err)
+	}
+
+	t.Logf("Contents of %s => %s", expectedOutputFilePath, outputFileContents)
+	if string(outputFileContents) != expectedOutputFileContents {
+		t.Fatalf(`Contents of %s => %s, expected %s`, expectedOutputFilePath, outputFileContents, expectedOutputFileContents)
+	}
+}
+
 func TestBuildSingleErrors(t *testing.T) {
 	t.Log("When a Handler is defined to respond to /* and response with Hello <path>!")
 	handler := http.NewServeMux()
@@ -114,10 +154,16 @@ func TestBuildSingleErrors(t *testing.T) {
 }
 
 func TestBuild(t *testing.T) {
-	t.Log("When a Handler is defined to respond to /* and response with Hello <path>!")
+	t.Log("When a Handler is defined to respond to /* and response with Hello directory for the directory and Hello <path> for all other requests!")
 	handler := http.NewServeMux()
 	handler.HandleFunc("/hello/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Hello %s!", path.Base(r.URL.Path))
+		var subject string
+		if strings.HasSuffix(r.URL.Path, "/") {
+			subject = "directory"
+		} else {
+			subject = path.Base(r.URL.Path)
+		}
+		fmt.Fprintf(w, "Hello %s!", subject)
 	})
 
 	t.Log("And Options are defined with defaults and an OutputDir that does not exist.")
@@ -126,20 +172,28 @@ func TestBuild(t *testing.T) {
 	options.OutputDir = filepath.Join(tempDir, "build")
 	t.Logf("OutputDir: %s", options.OutputDir)
 
+	t.Log("And Options are defined with a DirFilename of index.html.")
+
 	t.Log("And there are multiple paths to build.")
 	paths := []string{
+		"/hello/",
 		"/hello/go",
 		"/hello/world",
 		"/hello/universe",
 		"/bye",
 	}
 
-	t.Log("Expect Build to create the output path and write a file for each path with contents Hello <file>! And send one event per path to the EventHandler containing no error.")
+	t.Log("Expect Build to create the output path and write a file for each path with contents Hello directory! for the directory and Hello <file>! for the others. And send one event per path to the EventHandler containing no error.")
 	expected := []struct {
 		OutputFilePath     string
 		OutputFileContents string
 		Event              Event
 	}{
+		{
+			filepath.Join(options.OutputDir, "hello", "index.html"),
+			"Hello directory!",
+			Event{"build", 200, "/hello/", nil},
+		},
 		{
 			filepath.Join(options.OutputDir, "hello", "go"),
 			"Hello go!",
