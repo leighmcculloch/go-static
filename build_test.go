@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	"path"
+	pathutil "path"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -16,7 +16,7 @@ func ExampleBuild() {
 	paths := []string{}
 
 	handler.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Hello %s!", path.Base(r.URL.Path))
+		fmt.Fprintf(w, "Hello %s!", pathutil.Base(r.URL.Path))
 	})
 
 	paths = append(paths, "/world")
@@ -33,7 +33,7 @@ func ExampleBuildSingle() {
 	handler := http.NewServeMux()
 
 	handler.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Hello %s!", path.Base(r.URL.Path))
+		fmt.Fprintf(w, "Hello %s!", pathutil.Base(r.URL.Path))
 	})
 
 	status, err := BuildSingle(DefaultOptions, handler, "/world")
@@ -47,7 +47,7 @@ func TestBuildSingle(t *testing.T) {
 	t.Log("When a Handler is defined to respond to /* and response with Hello <path>!")
 	handler := http.NewServeMux()
 	handler.HandleFunc("/hello/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Hello %s!", path.Base(r.URL.Path))
+		fmt.Fprintf(w, "Hello %s!", pathutil.Base(r.URL.Path))
 	})
 
 	t.Log("And Options are defined with defaults and an OutputDir that does not exist.")
@@ -121,11 +121,11 @@ func TestBuildSingleDirFilename(t *testing.T) {
 	}
 }
 
-func TestBuildSingleErrors(t *testing.T) {
+func TestBuildSingleErrorsCreatingPath(t *testing.T) {
 	t.Log("When a Handler is defined to respond to /* and response with Hello <path>!")
 	handler := http.NewServeMux()
 	handler.HandleFunc("/hello/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Hello %s!", path.Base(r.URL.Path))
+		fmt.Fprintf(w, "Hello %s!", pathutil.Base(r.URL.Path))
 	})
 
 	t.Log("And Options are defined with defaults and an OutputDir.")
@@ -153,6 +153,70 @@ func TestBuildSingleErrors(t *testing.T) {
 	}
 }
 
+func TestBuildSingleErrorsCannotCreateFileAtPath(t *testing.T) {
+	t.Log("When a Handler is defined to respond to /* and response with Hello <path>!")
+	handler := http.NewServeMux()
+	handler.HandleFunc("/hello/", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintf(w, "Hello %s!", pathutil.Base(r.URL.Path))
+	})
+
+	t.Log("And Options are defined with defaults and an OutputDir.")
+	options := DefaultOptions
+	tempDir, _ := ioutil.TempDir("", "")
+	options.OutputDir = filepath.Join(tempDir, "build")
+	t.Logf("OutputDir => %s", options.OutputDir)
+
+	t.Log("And the path to build is /hello/world.")
+	path := "/hello/world"
+
+	t.Log("And the path to build already exists in the OutputDir and cannot be written to.")
+	fp := filepath.Join(options.OutputDir, path)
+	fd := pathutil.Dir(fp)
+	os.MkdirAll(fd, 0777)
+	f, _ := os.Create(fp)
+	f.Chmod(0000)
+	defer f.Close()
+
+	t.Log("Expect BuildSingle to error with a permission denied error.")
+
+	expectedStatus := 0
+	expectedErrString := "permission denied"
+	status, err := BuildSingle(options, handler, path)
+	if err != nil && strings.Contains(err.Error(), expectedErrString) {
+		t.Logf("BuildSingle(%#v) => %v, %v", path, status, err)
+	} else {
+		t.Errorf("BuildSingle(%#v) => %v, %v, expected %v and a %s error", path, status, err, expectedStatus, expectedErrString)
+	}
+}
+
+func TestBuildSingleErrorsInvalidPath(t *testing.T) {
+	t.Log("When a Handler is defined to respond to /* and response with Hello <path>!")
+	handler := http.NewServeMux()
+	handler.HandleFunc("/hello/", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintf(w, "Hello %s!", pathutil.Base(r.URL.Path))
+	})
+
+	t.Log("And Options are defined with defaults and an OutputDir.")
+	options := DefaultOptions
+	tempDir, _ := ioutil.TempDir("", "")
+	options.OutputDir = filepath.Join(tempDir, "build")
+	t.Logf("OutputDir => %s", options.OutputDir)
+
+	t.Log("And the path to build is /hello/world.")
+	path := "/hello/%aworld"
+
+	t.Log("Expect BuildSingle to error with a invalid URL error.")
+
+	expectedStatus := 0
+	expectedErrString := "invalid URL"
+	status, err := BuildSingle(options, handler, path)
+	if err != nil && strings.Contains(err.Error(), expectedErrString) {
+		t.Logf("BuildSingle(%#v) => %v, %v", path, status, err)
+	} else {
+		t.Errorf("BuildSingle(%#v) => %v, %v, expected %v and a %s error", path, status, err, expectedStatus, expectedErrString)
+	}
+}
+
 func TestBuild(t *testing.T) {
 	t.Log("When a Handler is defined to respond to /* and response with Hello directory for the directory and Hello <path> for all other requests!")
 	handler := http.NewServeMux()
@@ -161,7 +225,7 @@ func TestBuild(t *testing.T) {
 		if strings.HasSuffix(r.URL.Path, "/") {
 			subject = "directory"
 		} else {
-			subject = path.Base(r.URL.Path)
+			subject = pathutil.Base(r.URL.Path)
 		}
 		fmt.Fprintf(w, "Hello %s!", subject)
 	})
@@ -263,7 +327,7 @@ func TestBuildErrors(t *testing.T) {
 	t.Log("When a Handler is defined to respond to /* and response with Hello <path>!")
 	handler := http.NewServeMux()
 	handler.HandleFunc("/hello/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Hello %s!", path.Base(r.URL.Path))
+		fmt.Fprintf(w, "Hello %s!", pathutil.Base(r.URL.Path))
 	})
 
 	t.Log("And Options are defined with defaults and an OutputDir that does not exist.")
@@ -339,7 +403,7 @@ func TestBuildWithNilEventHandler(t *testing.T) {
 	t.Log("When a Handler is defined to respond to /* and response with Hello <path>!")
 	handler := http.NewServeMux()
 	handler.HandleFunc("/hello/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Hello %s!", path.Base(r.URL.Path))
+		fmt.Fprintf(w, "Hello %s!", pathutil.Base(r.URL.Path))
 	})
 
 	t.Log("And Options are defined with defaults and an OutputDir that does not exist.")
