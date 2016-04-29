@@ -149,7 +149,7 @@ func TestBuildSingleErrors(t *testing.T) {
 	if err != nil && strings.Contains(err.Error(), expectedErrString) {
 		t.Logf("BuildSingle(%#v) => %v, %v", path, status, err)
 	} else {
-		t.Errorf("BuildSingle(%#v) => %v, %v, expected %v and a %s error", path, err, expectedStatus, expectedErrString)
+		t.Errorf("BuildSingle(%#v) => %v, %v, expected %v and a %s error", path, status, err, expectedStatus, expectedErrString)
 	}
 }
 
