@@ -1,0 +1,8 @@
+version: '{build}'
+clone_folder: c:\gopath\src\github.com\leighmcculloch\static
+environment:
+  GOVERSION: 1.6
+  GOPATH: c:\gopath
+build: off
+test_script:
+- cmd: go test -cover ./...
