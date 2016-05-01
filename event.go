@@ -4,11 +4,11 @@ import (
 	"fmt"
 )
 
-// A build event representing that an action has taken place for a path in the build process, and includes an error if an error occurred while the action took place.
+// Event represents action has taken place for a path in the build process, and includes an error if an error occurred while the action took place.
 type Event struct {
 	// The action taken place on the path.
 	Action string
-	// The HTTP status code returned when the path was build.
+	// The HTTP status code returned when the path was built.
 	StatusCode int
 	// The path the action has taken place on.
 	Path string

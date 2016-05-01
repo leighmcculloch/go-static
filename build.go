@@ -40,7 +40,7 @@ func buildWorker(o Options, h http.Handler, paths <-chan string, eh EventHandler
 	}
 }
 
-// Build a single path. Uses the http.Handler to get the response for each path, and writes that response to a file with it's respective path in the OutputDir specified in the Options. Returns the HTTP status code return and an error if one occurs.
+// BuildSingle builds a single path. It uses the http.Handler to get the response for each path, and writes that response to a file with it's respective path in the OutputDir specified in the Options. Returns the HTTP status code returned by the handler and an error if one occurs.
 func BuildSingle(o Options, h http.Handler, path string) (int, error) {
 	fp := o.OutputDir + path
 	if strings.HasSuffix(fp, "/") {
