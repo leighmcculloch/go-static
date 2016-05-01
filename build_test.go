@@ -288,7 +288,7 @@ func TestBuild(t *testing.T) {
 		case events <- e:
 			t.Logf("Event received => %#v", e)
 		default:
-			t.Errorf("Additional event received => %#v", numberOfEvents, expectedNumberOfEvents)
+			t.Errorf("Additional event received => %#v", e)
 		}
 		numberOfEvents += 1
 	})
@@ -357,7 +357,7 @@ func TestBuildErrors(t *testing.T) {
 		case events <- e:
 			t.Logf("Event received => %#v", e)
 		default:
-			t.Errorf("Additional event received => %#v", numberOfEvents, expectedNumberOfEvents)
+			t.Errorf("Additional event received => %#v", e)
 		}
 		numberOfEvents += 1
 	})
