@@ -290,7 +290,7 @@ func TestBuild(t *testing.T) {
 		default:
 			t.Errorf("Additional event received => %#v", e)
 		}
-		numberOfEvents += 1
+		numberOfEvents++
 	})
 	close(events)
 	if numberOfEvents != expectedNumberOfEvents {
@@ -359,7 +359,7 @@ func TestBuildErrors(t *testing.T) {
 		default:
 			t.Errorf("Additional event received => %#v", e)
 		}
-		numberOfEvents += 1
+		numberOfEvents++
 	})
 	close(events)
 	if numberOfEvents != expectedNumberOfEvents {
