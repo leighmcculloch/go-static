@@ -1,4 +1,4 @@
-# static [![Build Status](https://travis-ci.org/leighmcculloch/static.svg?branch=master)](https://travis-ci.org/leighmcculloch/static) ![](https://img.shields.io/badge/coverage-100%-brightgreen.svg) [![Go docs](https://img.shields.io/badge/godoc-reference-blue.svg)](https://godoc.org/github.com/leighmcculloch/static)
+# static [![Build Status](https://travis-ci.org/leighmcculloch/static.svg?branch=master)](https://travis-ci.org/leighmcculloch/static) ![](https://img.shields.io/badge/coverage-100%-brightgreen.svg) [![Go Report Card](https://goreportcard.com/badge/github.com/leighmcculloch/static)](https://goreportcard.com/report/github.com/leighmcculloch/static) [![Go docs](https://img.shields.io/badge/godoc-reference-blue.svg)](https://godoc.org/github.com/leighmcculloch/static)
 
 A package for generating static websites from any Go web app that uses `net/http`.
 
