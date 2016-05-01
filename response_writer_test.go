@@ -17,11 +17,11 @@ func TestResponseWriterHeader(t *testing.T) {
 	t.Logf("Header => %#v", header)
 
 	t.Log("Expect Content-Type to be persisted.")
-	header_expected := http.Header{"Content-Type": []string{"text/html"}}
+	headerExpected := http.Header{"Content-Type": []string{"text/html"}}
 	header = responseWriter.Header()
 	t.Logf("Header => %#v", header)
-	if !reflect.DeepEqual(header, header_expected) {
-		t.Errorf("Header => %#v, want %#v", header, header_expected)
+	if !reflect.DeepEqual(header, headerExpected) {
+		t.Errorf("Header => %#v, want %#v", header, headerExpected)
 	}
 }
 
