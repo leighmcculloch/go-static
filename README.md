@@ -1,5 +1,5 @@
 # static
-[![Linux Build Status](https://img.shields.io/travis/leighmcculloch/static.svg?label=linux)](https://travis-ci.org/leighmcculloch/static)
+[![Linux/OSX Build Status](https://img.shields.io/travis/leighmcculloch/static.svg?label=linux%20%26%20osx)](https://travis-ci.org/leighmcculloch/static)
 [![Windows Build Status](https://img.shields.io/appveyor/ci/leighmcculloch/static.svg?label=windows)](https://ci.appveyor.com/project/leighmcculloch/static)
 [![Codecov](https://img.shields.io/codecov/c/github/leighmcculloch/static.svg)](https://codecov.io/gh/leighmcculloch/static)
 [![Go Report Card](https://goreportcard.com/badge/github.com/leighmcculloch/static)](https://goreportcard.com/report/github.com/leighmcculloch/static)
