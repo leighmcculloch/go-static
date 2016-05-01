@@ -1,5 +1,6 @@
 test:
-	go test -v -cover
+	go test -cover
+	go vet
 
 coverage:
 	go test -coverprofile=c.out
