@@ -3,7 +3,7 @@ package static
 import (
 	"net/http"
 	"os"
-	pathutil "path"
+	"path/filepath"
 	"strings"
 	"sync"
 )
@@ -42,21 +42,24 @@ func buildWorker(o Options, h http.Handler, paths <-chan string, eh EventHandler
 
 // BuildSingle builds a single path. It uses the http.Handler to get the response for each path, and writes that response to a file with it's respective path in the OutputDir specified in the Options. Returns the HTTP status code returned by the handler and an error if one occurs.
 func BuildSingle(o Options, h http.Handler, path string) (int, error) {
-	fp := o.OutputDir + path
-	if strings.HasSuffix(fp, "/") {
-		fp += o.DirFilename
+	pathIsDir := strings.HasSuffix(path, "/")
+
+	filePath := filepath.FromSlash(path)
+	if pathIsDir {
+		filePath = filepath.Join(filePath, o.DirFilename)
 	}
 
-	dp := pathutil.Dir(fp)
-	_, err := os.Stat(dp)
+	outputPath := filepath.Join(o.OutputDir, filePath)
+	outputDir := filepath.Dir(outputPath)
+	_, err := os.Stat(outputDir)
 	if os.IsNotExist(err) {
-		err = os.MkdirAll(dp, 0755)
+		err = os.MkdirAll(outputDir, 0755)
 	}
 	if err != nil {
 		return 0, err
 	}
 
-	f, err := os.Create(fp)
+	f, err := os.Create(outputPath)
 	if err != nil {
 		return 0, err
 	}

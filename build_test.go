@@ -5,7 +5,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	pathutil "path"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -16,7 +15,7 @@ func ExampleBuild() {
 	paths := []string{}
 
 	handler.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Hello %s!", pathutil.Base(r.URL.Path))
+		fmt.Fprintf(w, "Hello %s!", filepath.Base(r.URL.Path))
 	})
 
 	paths = append(paths, "/world")
@@ -33,7 +32,7 @@ func ExampleBuildSingle() {
 	handler := http.NewServeMux()
 
 	handler.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Hello %s!", pathutil.Base(r.URL.Path))
+		fmt.Fprintf(w, "Hello %s!", filepath.Base(r.URL.Path))
 	})
 
 	status, err := BuildSingle(DefaultOptions, handler, "/world")
@@ -47,7 +46,7 @@ func TestBuildSingle(t *testing.T) {
 	t.Log("When a Handler is defined to respond to /* and response with Hello <path>!")
 	handler := http.NewServeMux()
 	handler.HandleFunc("/hello/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Hello %s!", pathutil.Base(r.URL.Path))
+		fmt.Fprintf(w, "Hello %s!", filepath.Base(r.URL.Path))
 	})
 
 	t.Log("And Options are defined with defaults and an OutputDir that does not exist.")
@@ -125,7 +124,7 @@ func TestBuildSingleErrorsCreatingPath(t *testing.T) {
 	t.Log("When a Handler is defined to respond to /* and response with Hello <path>!")
 	handler := http.NewServeMux()
 	handler.HandleFunc("/hello/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Hello %s!", pathutil.Base(r.URL.Path))
+		fmt.Fprintf(w, "Hello %s!", filepath.Base(r.URL.Path))
 	})
 
 	t.Log("And Options are defined with defaults and an OutputDir.")
@@ -157,7 +156,7 @@ func TestBuildSingleErrorsCannotCreateFileAtPath(t *testing.T) {
 	t.Log("When a Handler is defined to respond to /* and response with Hello <path>!")
 	handler := http.NewServeMux()
 	handler.HandleFunc("/hello/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Hello %s!", pathutil.Base(r.URL.Path))
+		fmt.Fprintf(w, "Hello %s!", filepath.Base(r.URL.Path))
 	})
 
 	t.Log("And Options are defined with defaults and an OutputDir.")
@@ -171,7 +170,7 @@ func TestBuildSingleErrorsCannotCreateFileAtPath(t *testing.T) {
 
 	t.Log("And the path to build already exists in the OutputDir and cannot be written to.")
 	fp := filepath.Join(options.OutputDir, path)
-	fd := pathutil.Dir(fp)
+	fd := filepath.Dir(fp)
 	os.MkdirAll(fd, 0777)
 	f, _ := os.Create(fp)
 	f.Chmod(0000)
@@ -193,7 +192,7 @@ func TestBuildSingleErrorsInvalidPath(t *testing.T) {
 	t.Log("When a Handler is defined to respond to /* and response with Hello <path>!")
 	handler := http.NewServeMux()
 	handler.HandleFunc("/hello/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Hello %s!", pathutil.Base(r.URL.Path))
+		fmt.Fprintf(w, "Hello %s!", filepath.Base(r.URL.Path))
 	})
 
 	t.Log("And Options are defined with defaults and an OutputDir.")
@@ -225,7 +224,7 @@ func TestBuild(t *testing.T) {
 		if strings.HasSuffix(r.URL.Path, "/") {
 			subject = "directory"
 		} else {
-			subject = pathutil.Base(r.URL.Path)
+			subject = filepath.Base(r.URL.Path)
 		}
 		fmt.Fprintf(w, "Hello %s!", subject)
 	})
@@ -327,7 +326,7 @@ func TestBuildErrors(t *testing.T) {
 	t.Log("When a Handler is defined to respond to /* and response with Hello <path>!")
 	handler := http.NewServeMux()
 	handler.HandleFunc("/hello/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Hello %s!", pathutil.Base(r.URL.Path))
+		fmt.Fprintf(w, "Hello %s!", filepath.Base(r.URL.Path))
 	})
 
 	t.Log("And Options are defined with defaults and an OutputDir that does not exist.")
@@ -403,7 +402,7 @@ func TestBuildWithNilEventHandler(t *testing.T) {
 	t.Log("When a Handler is defined to respond to /* and response with Hello <path>!")
 	handler := http.NewServeMux()
 	handler.HandleFunc("/hello/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Hello %s!", pathutil.Base(r.URL.Path))
+		fmt.Fprintf(w, "Hello %s!", filepath.Base(r.URL.Path))
 	})
 
 	t.Log("And Options are defined with defaults and an OutputDir that does not exist.")
