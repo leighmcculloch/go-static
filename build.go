@@ -1,6 +1,7 @@
 package static
 
 import (
+	"fmt"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -56,18 +57,21 @@ func BuildSingle(o Options, h http.Handler, path string) (int, error) {
 		err = os.MkdirAll(outputDir, 0755)
 	}
 	if err != nil {
-		return 0, err
+		message := fmt.Sprintf("Unable to create dir %s for path %s", outputDir, path)
+		return 0, buildError{message, err}
 	}
 
 	f, err := os.Create(outputPath)
 	if err != nil {
-		return 0, err
+		message := fmt.Sprintf("Unable to create file %s for path %s", outputPath, path)
+		return 0, buildError{message, err}
 	}
 	defer f.Close()
 
 	r, err := http.NewRequest("GET", path, nil)
 	if err != nil {
-		return 0, err
+		message := fmt.Sprintf("Unable to create http.Request for path %s", path)
+		return 0, buildError{message, err}
 	}
 	rw := newResponseWriter(f)
 	h.ServeHTTP(&rw, r)

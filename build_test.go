@@ -140,10 +140,10 @@ func TestBuildSingleErrorsCreatingPath(t *testing.T) {
 	t.Log("And the path to build is /hello/world.")
 	path := "/hello/world"
 
-	t.Log("Expect BuildSingle to error with not a directory error.")
+	t.Log("Expect BuildSingle to error with not an unable to create dir error.")
 
 	expectedStatus := 0
-	expectedErrString := "not a directory"
+	expectedErrString := "Unable to create dir"
 	status, err := BuildSingle(options, handler, path)
 	if err != nil && strings.Contains(err.Error(), expectedErrString) {
 		t.Logf("BuildSingle(%#v) => %v, %v", path, status, err)
@@ -176,10 +176,10 @@ func TestBuildSingleErrorsCannotCreateFileAtPath(t *testing.T) {
 	f.Chmod(0000)
 	defer f.Close()
 
-	t.Log("Expect BuildSingle to error with a permission denied error.")
+	t.Log("Expect BuildSingle to error with an unable to create file error.")
 
 	expectedStatus := 0
-	expectedErrString := "permission denied"
+	expectedErrString := "Unable to create file"
 	status, err := BuildSingle(options, handler, path)
 	if err != nil && strings.Contains(err.Error(), expectedErrString) {
 		t.Logf("BuildSingle(%#v) => %v, %v", path, status, err)
@@ -204,10 +204,10 @@ func TestBuildSingleErrorsInvalidPath(t *testing.T) {
 	t.Log("And the path to build is /hello/world.")
 	path := "/hello/%aworld"
 
-	t.Log("Expect BuildSingle to error with a invalid URL error.")
+	t.Log("Expect BuildSingle to error with an unable to create http.Request for path error.")
 
 	expectedStatus := 0
-	expectedErrString := "invalid URL"
+	expectedErrString := "Unable to create http.Request for path"
 	status, err := BuildSingle(options, handler, path)
 	if err != nil && strings.Contains(err.Error(), expectedErrString) {
 		t.Logf("BuildSingle(%#v) => %v, %v", path, status, err)
@@ -346,7 +346,7 @@ func TestBuildErrors(t *testing.T) {
 		"/hello/universe",
 	}
 
-	t.Log("Expect Build to send one event per path to the EventHandler containing a not a directory error.")
+	t.Log("Expect Build to send one event per path to the EventHandler containing an Unable to create dir error.")
 
 	expectedNumberOfEvents := len(paths)
 	numberOfEvents := 0
@@ -389,7 +389,7 @@ func TestBuildErrors(t *testing.T) {
 			t.Errorf("Event for %s Path => %s, expected %s.", path, event.Path, path)
 		}
 
-		expectedErrString := "not a directory"
+		expectedErrString := "Unable to create dir"
 		if event.Error != nil && strings.Contains(event.Error.Error(), expectedErrString) {
 			t.Logf("Build(%#v) => %v", path, event.Error)
 		} else {
