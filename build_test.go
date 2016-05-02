@@ -170,11 +170,7 @@ func TestBuildSingleErrorsCannotCreateFileAtPath(t *testing.T) {
 
 	t.Log("And the path to build already exists in the OutputDir and cannot be written to.")
 	fp := filepath.Join(options.OutputDir, path)
-	fd := filepath.Dir(fp)
-	os.MkdirAll(fd, 0777)
-	f, _ := os.Create(fp)
-	f.Chmod(0000)
-	defer f.Close()
+	os.MkdirAll(fp, 0777)
 
 	t.Log("Expect BuildSingle to error with an unable to create file error.")
 
