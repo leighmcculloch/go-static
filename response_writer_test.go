@@ -25,99 +25,99 @@ func TestResponseWriterHeader(t *testing.T) {
 	}
 }
 
-func TestResponseWriterStatus(t *testing.T) {
+func TestResponseWriterStatusCode(t *testing.T) {
 	writtenBuffer := bytes.Buffer{}
 	responseWriter := newResponseWriter(&writtenBuffer)
 
-	t.Log("Expect default Status to be 0.")
-	expectedStatus := 0
-	status := responseWriter.Status()
-	t.Logf("Status => %d", status)
-	if status != expectedStatus {
-		t.Logf("Status => %d, want %d", status, expectedStatus)
+	t.Log("Expect default StatusCode to be 0.")
+	expectedStatusCode := 0
+	statusCode := responseWriter.StatusCode()
+	t.Logf("StatusCode => %d", statusCode)
+	if statusCode != expectedStatusCode {
+		t.Logf("StatusCode => %d, want %d", statusCode, expectedStatusCode)
 	}
 }
 
-func TestResponseWriterStatusAfterWriteHeader(t *testing.T) {
+func TestResponseWriterStatusCodeAfterWriteHeader(t *testing.T) {
 	writtenBuffer := bytes.Buffer{}
 	responseWriter := newResponseWriter(&writtenBuffer)
 
 	t.Log("When WriteHeader has been called with a status code.")
-	t.Log("Expect Status to be the status code.")
+	t.Log("Expect StatusCode to be the status code.")
 	{
-		expectedStatus := 404
+		expectedStatusCode := 404
 		responseWriter.WriteHeader(404)
 		t.Logf("WriteHeader(404)")
-		status := responseWriter.Status()
-		t.Logf("Status => %d", status)
-		if status != expectedStatus {
-			t.Logf("Status => %d, want %d", status, expectedStatus)
+		statusCode := responseWriter.StatusCode()
+		t.Logf("StatusCode => %d", statusCode)
+		if statusCode != expectedStatusCode {
+			t.Logf("StatusCode => %d, want %d", statusCode, expectedStatusCode)
 		}
 	}
 
 	t.Log("When WriteHeader has been called multiple times.")
-	t.Log("Expect Status to be the last status code.")
+	t.Log("Expect StatusCode to be the last status code.")
 	{
-		expectedStatus := 403
+		expectedStatusCode := 403
 		responseWriter.WriteHeader(403)
 		t.Logf("WriteHeader(403)")
-		status := responseWriter.Status()
-		t.Logf("Status => %d", status)
-		if status != expectedStatus {
-			t.Logf("Status => %d, want %d", status, expectedStatus)
+		statusCode := responseWriter.StatusCode()
+		t.Logf("StatusCode => %d", statusCode)
+		if statusCode != expectedStatusCode {
+			t.Logf("StatusCode => %d, want %d", statusCode, expectedStatusCode)
 		}
 	}
 }
 
-func TestResponseWriterStatusAfterWrite(t *testing.T) {
+func TestResponseWriterStatusCodeAfterWrite(t *testing.T) {
 	writtenBuffer := bytes.Buffer{}
 	responseWriter := newResponseWriter(&writtenBuffer)
 
 	t.Log("When Write has been called.")
-	t.Log("Expect Status to be 200 OK.")
-	expectedStatus := 200
+	t.Log("Expect StatusCode to be 200 OK.")
+	expectedStatusCode := 200
 	responseWriter.Write([]byte{})
 	t.Logf("Write([]byte{})")
-	status := responseWriter.Status()
-	t.Logf("Status => %d", status)
-	if status != expectedStatus {
-		t.Logf("Status => %d, want %d", status, expectedStatus)
+	statusCode := responseWriter.StatusCode()
+	t.Logf("StatusCode => %d", statusCode)
+	if statusCode != expectedStatusCode {
+		t.Logf("StatusCode => %d, want %d", statusCode, expectedStatusCode)
 	}
 }
 
-func TestResponseWriterStatusAfterWriteHeaderAndWrite(t *testing.T) {
+func TestResponseWriterStatusCodeAfterWriteHeaderAndWrite(t *testing.T) {
 	writtenBuffer := bytes.Buffer{}
 	responseWriter := newResponseWriter(&writtenBuffer)
 
 	t.Log("When WriteHeader and Write have been called.")
-	t.Log("Expect Status to be the WriteHeader input.")
-	expectedStatus := 404
+	t.Log("Expect StatusCode to be the WriteHeader input.")
+	expectedStatusCode := 404
 	responseWriter.WriteHeader(404)
 	t.Logf("WriteHeader(404)")
 	responseWriter.Write([]byte{})
 	t.Logf("Write([]byte{})")
-	status := responseWriter.Status()
-	t.Logf("Status => %d", status)
-	if status != expectedStatus {
-		t.Logf("Status => %d, want %d", status, expectedStatus)
+	statusCode := responseWriter.StatusCode()
+	t.Logf("StatusCode => %d", statusCode)
+	if statusCode != expectedStatusCode {
+		t.Logf("StatusCode => %d, want %d", statusCode, expectedStatusCode)
 	}
 }
 
-func TestResponseWriterStatusAfterWriteAndWriteHeader(t *testing.T) {
+func TestResponseWriterStatusCodeAfterWriteAndWriteHeader(t *testing.T) {
 	writtenBuffer := bytes.Buffer{}
 	responseWriter := newResponseWriter(&writtenBuffer)
 
 	t.Log("When Write and WriteHeader have been called.")
-	t.Log("Expect Status to be the WriteHeader input.")
-	expectedStatus := 404
+	t.Log("Expect StatusCode to be the WriteHeader input.")
+	expectedStatusCode := 404
 	responseWriter.Write([]byte{})
 	t.Logf("Write([]byte{})")
 	responseWriter.WriteHeader(404)
 	t.Logf("WriteHeader(404)")
-	status := responseWriter.Status()
-	t.Logf("Status => %d", status)
-	if status != expectedStatus {
-		t.Logf("Status => %d, want %d", status, expectedStatus)
+	statusCode := responseWriter.StatusCode()
+	t.Logf("StatusCode => %d", statusCode)
+	if statusCode != expectedStatusCode {
+		t.Logf("StatusCode => %d, want %d", statusCode, expectedStatusCode)
 	}
 }
 

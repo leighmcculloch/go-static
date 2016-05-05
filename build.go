@@ -38,8 +38,8 @@ func Build(o Options, h http.Handler, paths []string, eh EventHandler) {
 
 func buildWorker(o Options, h http.Handler, paths <-chan string, eh EventHandler) {
 	for path := range paths {
-		status, err := BuildSingle(o, h, path)
-		eh(Event{Action: "build", StatusCode: status, Path: path, Error: err})
+		statusCode, err := BuildSingle(o, h, path)
+		eh(Event{Action: "build", StatusCode: statusCode, Path: path, Error: err})
 	}
 }
 
@@ -78,5 +78,5 @@ func BuildSingle(o Options, h http.Handler, path string) (int, error) {
 	rw := newResponseWriter(f)
 	h.ServeHTTP(&rw, r)
 
-	return rw.Status(), nil
+	return rw.StatusCode(), nil
 }

@@ -6,10 +6,10 @@ import (
 )
 
 type responseWriter struct {
-	writer    io.Writer
-	header    http.Header
-	status    int
-	statusSet bool
+	writer     io.Writer
+	header     http.Header
+	statusCode int
+	statusSet  bool
 }
 
 func newResponseWriter(w io.Writer) responseWriter {
@@ -23,18 +23,18 @@ func (rc *responseWriter) Header() http.Header {
 	return rc.header
 }
 
-func (rc *responseWriter) WriteHeader(code int) {
-	rc.status = code
+func (rc *responseWriter) WriteHeader(statusCode int) {
+	rc.statusCode = statusCode
 	rc.statusSet = true
 }
 
-func (rc *responseWriter) Status() int {
-	return rc.status
+func (rc *responseWriter) StatusCode() int {
+	return rc.statusCode
 }
 
 func (rc *responseWriter) Write(p []byte) (n int, err error) {
 	if !rc.statusSet {
-		rc.status = http.StatusOK
+		rc.statusCode = http.StatusOK
 	}
 	return rc.writer.Write(p)
 }
