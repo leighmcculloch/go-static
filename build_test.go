@@ -25,7 +25,7 @@ func ExampleBuild() {
 	})
 
 	// Output:
-	// Action: build, StatusCode: 200, Path: /world, OutputPath: build/world
+	// Action: build, Path: /world, StatusCode: 200, OutputPath: build/world
 }
 
 func ExampleBuildSingle() {
@@ -251,27 +251,27 @@ func TestBuild(t *testing.T) {
 		{
 			filepath.Join(options.OutputDir, "hello", "index.html"),
 			"Hello directory!",
-			Event{"build", 200, "/hello/", filepath.Join(options.OutputDir, "hello", "index.html"), nil},
+			Event{"build", "/hello/", 200, filepath.Join(options.OutputDir, "hello", "index.html"), nil},
 		},
 		{
 			filepath.Join(options.OutputDir, "hello", "go"),
 			"Hello go!",
-			Event{"build", 200, "/hello/go", filepath.Join(options.OutputDir, "hello", "go"), nil},
+			Event{"build", "/hello/go", 200, filepath.Join(options.OutputDir, "hello", "go"), nil},
 		},
 		{
 			filepath.Join(options.OutputDir, "hello", "world"),
 			"Hello world!",
-			Event{"build", 200, "/hello/world", filepath.Join(options.OutputDir, "hello", "world"), nil},
+			Event{"build", "/hello/world", 200, filepath.Join(options.OutputDir, "hello", "world"), nil},
 		},
 		{
 			filepath.Join(options.OutputDir, "hello", "universe"),
 			"Hello universe!",
-			Event{"build", 200, "/hello/universe", filepath.Join(options.OutputDir, "hello", "universe"), nil},
+			Event{"build", "/hello/universe", 200, filepath.Join(options.OutputDir, "hello", "universe"), nil},
 		},
 		{
 			filepath.Join(options.OutputDir, "bye"),
 			"404 page not found\n",
-			Event{"build", 404, "/bye", filepath.Join(options.OutputDir, "bye"), nil},
+			Event{"build", "/bye", 404, filepath.Join(options.OutputDir, "bye"), nil},
 		},
 	}
 
