@@ -344,7 +344,7 @@ func TestBuildErrors(t *testing.T) {
 			t.Errorf("Event not received for path => %s, but was expected once.", path)
 		}
 
-		expectedAction := "build"
+		expectedAction := BUILD
 		if event.Action != expectedAction {
 			t.Errorf("Event for %s Action => %s, expected %s.", path, event.Action, expectedAction)
 		}
