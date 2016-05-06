@@ -3,7 +3,7 @@ package static
 import (
 	"fmt"
 	"net/http"
-	"path/filepath"
+	"path"
 )
 
 func ExampleBuild() {
@@ -11,7 +11,7 @@ func ExampleBuild() {
 	paths := []string{}
 
 	handler.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Hello %s!", filepath.Base(r.URL.Path))
+		fmt.Fprintf(w, "Hello %s!", path.Base(r.URL.Path))
 	})
 
 	paths = append(paths, "/world")
@@ -28,7 +28,7 @@ func ExampleBuildSingle() {
 	handler := http.NewServeMux()
 
 	handler.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Hello %s!", filepath.Base(r.URL.Path))
+		fmt.Fprintf(w, "Hello %s!", path.Base(r.URL.Path))
 	})
 
 	statusCode, outputPath, err := BuildSingle(DefaultOptions, handler, "/world")
