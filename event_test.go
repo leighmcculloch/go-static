@@ -10,9 +10,9 @@ func TestString(t *testing.T) {
 		event    Event
 		expected string
 	}{
-		{Event{Action: "action", StatusCode: 200, Path: "/path"}, "Action: action, StatusCode: 200, Path: /path"},
-		{Event{Action: "action", StatusCode: 404, Path: "/path"}, "Action: action, StatusCode: 404, Path: /path"},
-		{Event{Action: "action", StatusCode: 200, Path: "/path", Error: errors.New("error")}, "Action: action, StatusCode: 200, Path: /path, Error: error"},
+		{Event{Action: "action", StatusCode: 200, Path: "/path", OutputPath: "/output-path/path"}, "Action: action, StatusCode: 200, Path: /path, OutputPath: /output-path/path"},
+		{Event{Action: "action", StatusCode: 404, Path: "/path", OutputPath: "/output-path/path"}, "Action: action, StatusCode: 404, Path: /path, OutputPath: /output-path/path"},
+		{Event{Action: "action", StatusCode: 200, Path: "/path", OutputPath: "/output-path/path", Error: errors.New("error")}, "Action: action, StatusCode: 200, Path: /path, OutputPath: /output-path/path, Error: error"},
 	}
 
 	for _, test := range tests {

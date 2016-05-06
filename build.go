@@ -38,13 +38,13 @@ func Build(o Options, h http.Handler, paths []string, eh EventHandler) {
 
 func buildWorker(o Options, h http.Handler, paths <-chan string, eh EventHandler) {
 	for path := range paths {
-		statusCode, err := BuildSingle(o, h, path)
-		eh(Event{Action: "build", StatusCode: statusCode, Path: path, Error: err})
+		statusCode, outputPath, err := BuildSingle(o, h, path)
+		eh(Event{Action: "build", StatusCode: statusCode, Path: path, OutputPath: outputPath, Error: err})
 	}
 }
 
-// BuildSingle builds a single path. It uses the http.Handler to get the response for each path, and writes that response to a file with it's respective path in the OutputDir specified in the Options. Returns the HTTP status code returned by the handler and an error if one occurs.
-func BuildSingle(o Options, h http.Handler, path string) (statusCode int, err error) {
+// BuildSingle builds a single path. It uses the http.Handler to get the response for each path, and writes that response to a file with it's respective path in the OutputDir specified in the Options. Returns the HTTP status code returned by the handler, the output path written to and an error if one occurs.
+func BuildSingle(o Options, h http.Handler, path string) (statusCode int, outputPath string, err error) {
 	pathIsDir := strings.HasSuffix(path, "/")
 
 	filePath := filepath.FromSlash(path)
@@ -52,7 +52,7 @@ func BuildSingle(o Options, h http.Handler, path string) (statusCode int, err er
 		filePath = filepath.Join(filePath, o.DirFilename)
 	}
 
-	outputPath := filepath.Join(o.OutputDir, filePath)
+	outputPath = filepath.Join(o.OutputDir, filePath)
 	outputDir := filepath.Dir(outputPath)
 	_, err = os.Stat(outputDir)
 	if os.IsNotExist(err) {
@@ -60,23 +60,23 @@ func BuildSingle(o Options, h http.Handler, path string) (statusCode int, err er
 	}
 	if err != nil {
 		message := fmt.Sprintf("Unable to create dir %s for path %s", outputDir, path)
-		return 0, buildError{message, err}
+		return 0, "", buildError{message, err}
 	}
 
 	f, err := os.Create(outputPath)
 	if err != nil {
 		message := fmt.Sprintf("Unable to create file %s for path %s", outputPath, path)
-		return 0, buildError{message, err}
+		return 0, "", buildError{message, err}
 	}
 	defer f.Close()
 
 	r, err := http.NewRequest("GET", path, nil)
 	if err != nil {
 		message := fmt.Sprintf("Unable to create http.Request for path %s", path)
-		return 0, buildError{message, err}
+		return 0, "", buildError{message, err}
 	}
 	rw := newResponseWriter(f)
 	h.ServeHTTP(&rw, r)
 
-	return rw.StatusCode(), nil
+	return rw.StatusCode(), outputPath, nil
 }

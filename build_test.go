@@ -25,7 +25,7 @@ func ExampleBuild() {
 	})
 
 	// Output:
-	// Action: build, StatusCode: 200, Path: /world
+	// Action: build, StatusCode: 200, Path: /world, OutputPath: build/world
 }
 
 func ExampleBuildSingle() {
@@ -35,11 +35,11 @@ func ExampleBuildSingle() {
 		fmt.Fprintf(w, "Hello %s!", filepath.Base(r.URL.Path))
 	})
 
-	status, err := BuildSingle(DefaultOptions, handler, "/world")
-	fmt.Printf("Built: /world, StatusCode: %d, Error: %v", status, err)
+	statusCode, outputPath, err := BuildSingle(DefaultOptions, handler, "/world")
+	fmt.Printf("Built: /world, StatusCode: %d, OutputPath: %v, Error: %v", statusCode, outputPath, err)
 
 	// Output:
-	// Built: /world, StatusCode: 200, Error: <nil>
+	// Built: /world, StatusCode: 200, OutputPath: build/world, Error: <nil>
 }
 
 func TestBuildSingle(t *testing.T) {
@@ -63,10 +63,10 @@ func TestBuildSingle(t *testing.T) {
 	expectedOutputFilePath := filepath.Join(options.OutputDir, "hello", "world")
 	expectedOutputFileContents := "Hello world!"
 
-	status, err := BuildSingle(options, handler, path)
-	t.Logf("BuildSingle(%#v) => %v, %v", path, status, err)
-	if status != expectedStatus || err != nil {
-		t.Errorf("BuildSingle(%#v) => %v, %v, expected %v, nil", path, status, err, expectedStatus)
+	status, outputPath, err := BuildSingle(options, handler, path)
+	t.Logf("BuildSingle(%#v) => %v, %v, %v", path, outputPath, status, err)
+	if (status != expectedStatus && outputPath != expectedOutputFilePath) || err != nil {
+		t.Errorf("BuildSingle(%#v) => %v, %v, %v, expected %v, nil", path, status, outputPath, err, expectedStatus)
 	}
 
 	outputFileContents, err := ioutil.ReadFile(expectedOutputFilePath)
@@ -103,10 +103,10 @@ func TestBuildSingleDirFilename(t *testing.T) {
 	expectedOutputFilePath := filepath.Join(options.OutputDir, "hello", "index.html")
 	expectedOutputFileContents := "Hello directory!"
 
-	status, err := BuildSingle(options, handler, path)
-	t.Logf("BuildSingle(%#v) => %v, %v", path, status, err)
-	if status != expectedStatus || err != nil {
-		t.Errorf("BuildSingle(%#v) => %v, %v, expected %v, nil", path, status, err, expectedStatus)
+	status, outputPath, err := BuildSingle(options, handler, path)
+	t.Logf("BuildSingle(%#v) => %v, %v, %v", path, status, outputPath, err)
+	if (status != expectedStatus && outputPath != expectedOutputFilePath) || err != nil {
+		t.Errorf("BuildSingle(%#v) => %v, %v, %v, expected %v, %v, nil", path, status, outputPath, outputPath, err, expectedStatus)
 	}
 
 	outputFileContents, err := ioutil.ReadFile(expectedOutputFilePath)
@@ -144,11 +144,11 @@ func TestBuildSingleErrorsCreatingPath(t *testing.T) {
 
 	expectedStatus := 0
 	expectedErrString := "Unable to create dir"
-	status, err := BuildSingle(options, handler, path)
+	status, outputPath, err := BuildSingle(options, handler, path)
 	if err != nil && strings.Contains(err.Error(), expectedErrString) {
-		t.Logf("BuildSingle(%#v) => %v, %v", path, status, err)
+		t.Logf("BuildSingle(%#v) => %v, %v, %v", path, status, outputPath, err)
 	} else {
-		t.Errorf("BuildSingle(%#v) => %v, %v, expected %v and a %s error", path, status, err, expectedStatus, expectedErrString)
+		t.Errorf("BuildSingle(%#v) => %v, %v, %v, expected %v, nil and a %s error", path, status, outputPath, err, expectedStatus, expectedErrString)
 	}
 }
 
@@ -176,11 +176,11 @@ func TestBuildSingleErrorsCannotCreateFileAtPath(t *testing.T) {
 
 	expectedStatus := 0
 	expectedErrString := "Unable to create file"
-	status, err := BuildSingle(options, handler, path)
+	status, outputPath, err := BuildSingle(options, handler, path)
 	if err != nil && strings.Contains(err.Error(), expectedErrString) {
-		t.Logf("BuildSingle(%#v) => %v, %v", path, status, err)
+		t.Logf("BuildSingle(%#v) => %v, %v, %v", path, status, outputPath, err)
 	} else {
-		t.Errorf("BuildSingle(%#v) => %v, %v, expected %v and a %s error", path, status, err, expectedStatus, expectedErrString)
+		t.Errorf("BuildSingle(%#v) => %v, %v, %v, expected %v, nil and a %s error", path, status, outputPath, err, expectedStatus, expectedErrString)
 	}
 }
 
@@ -204,11 +204,11 @@ func TestBuildSingleErrorsInvalidPath(t *testing.T) {
 
 	expectedStatus := 0
 	expectedErrString := "Unable to create http.Request for path"
-	status, err := BuildSingle(options, handler, path)
+	status, outputPath, err := BuildSingle(options, handler, path)
 	if err != nil && strings.Contains(err.Error(), expectedErrString) {
-		t.Logf("BuildSingle(%#v) => %v, %v", path, status, err)
+		t.Logf("BuildSingle(%#v) => %v, %v, %v", path, status, outputPath, err)
 	} else {
-		t.Errorf("BuildSingle(%#v) => %v, %v, expected %v and a %s error", path, status, err, expectedStatus, expectedErrString)
+		t.Errorf("BuildSingle(%#v) => %v, %v, %v, expected %v, nil and a %s error", path, status, outputPath, err, expectedStatus, expectedErrString)
 	}
 }
 
@@ -251,27 +251,27 @@ func TestBuild(t *testing.T) {
 		{
 			filepath.Join(options.OutputDir, "hello", "index.html"),
 			"Hello directory!",
-			Event{"build", 200, "/hello/", nil},
+			Event{"build", 200, "/hello/", filepath.Join(options.OutputDir, "hello", "index.html"), nil},
 		},
 		{
 			filepath.Join(options.OutputDir, "hello", "go"),
 			"Hello go!",
-			Event{"build", 200, "/hello/go", nil},
+			Event{"build", 200, "/hello/go", filepath.Join(options.OutputDir, "hello", "go"), nil},
 		},
 		{
 			filepath.Join(options.OutputDir, "hello", "world"),
 			"Hello world!",
-			Event{"build", 200, "/hello/world", nil},
+			Event{"build", 200, "/hello/world", filepath.Join(options.OutputDir, "hello", "world"), nil},
 		},
 		{
 			filepath.Join(options.OutputDir, "hello", "universe"),
 			"Hello universe!",
-			Event{"build", 200, "/hello/universe", nil},
+			Event{"build", 200, "/hello/universe", filepath.Join(options.OutputDir, "hello", "universe"), nil},
 		},
 		{
 			filepath.Join(options.OutputDir, "bye"),
 			"404 page not found\n",
-			Event{"build", 404, "/bye", nil},
+			Event{"build", 404, "/bye", filepath.Join(options.OutputDir, "bye"), nil},
 		},
 	}
 
