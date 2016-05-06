@@ -10,38 +10,6 @@ import (
 	"testing"
 )
 
-func ExampleBuild() {
-	handler := http.NewServeMux()
-	paths := []string{}
-
-	handler.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Hello %s!", filepath.Base(r.URL.Path))
-	})
-
-	paths = append(paths, "/world")
-
-	Build(DefaultOptions, handler, paths, func(e Event) {
-		fmt.Println(e)
-	})
-
-	// Output:
-	// Action: build, Path: /world, StatusCode: 200, OutputPath: build/world
-}
-
-func ExampleBuildSingle() {
-	handler := http.NewServeMux()
-
-	handler.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Hello %s!", filepath.Base(r.URL.Path))
-	})
-
-	statusCode, outputPath, err := BuildSingle(DefaultOptions, handler, "/world")
-	fmt.Printf("Built: /world, StatusCode: %d, OutputPath: %v, Error: %v", statusCode, outputPath, err)
-
-	// Output:
-	// Built: /world, StatusCode: 200, OutputPath: build/world, Error: <nil>
-}
-
 func TestBuildSingle(t *testing.T) {
 	t.Log("When a Handler is defined to respond to /* and response with Hello <path>!")
 	handler := http.NewServeMux()
