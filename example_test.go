@@ -1,11 +1,13 @@
 // +build !windows
 
-package static
+package static_test
 
 import (
 	"fmt"
 	"net/http"
 	"path"
+
+	"github.com/leighmcculloch/static"
 )
 
 func ExampleBuild() {
@@ -18,7 +20,7 @@ func ExampleBuild() {
 
 	paths = append(paths, "/world")
 
-	Build(DefaultOptions, handler, paths, func(e Event) {
+	static.Build(static.DefaultOptions, handler, paths, func(e static.Event) {
 		fmt.Println(e)
 	})
 
@@ -33,7 +35,7 @@ func ExampleBuildSingle() {
 		fmt.Fprintf(w, "Hello %s!", path.Base(r.URL.Path))
 	})
 
-	statusCode, outputPath, err := BuildSingle(DefaultOptions, handler, "/world")
+	statusCode, outputPath, err := static.BuildSingle(static.DefaultOptions, handler, "/world")
 	fmt.Printf("Built: /world, StatusCode: %d, OutputPath: %v, Error: %v", statusCode, outputPath, err)
 
 	// Output:
