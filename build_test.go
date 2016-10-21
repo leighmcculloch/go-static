@@ -1,7 +1,6 @@
 package static_test
 
 import (
-	"."
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -10,6 +9,8 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/leighmcculloch/static"
 )
 
 func ExampleBuild() {

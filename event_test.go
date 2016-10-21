@@ -1,9 +1,10 @@
 package static_test
 
 import (
-	"."
 	"errors"
 	"testing"
+
+	"github.com/leighmcculloch/static"
 )
 
 func TestString(t *testing.T) {

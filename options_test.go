@@ -1,8 +1,9 @@
 package static_test
 
 import (
-	"."
 	"testing"
+
+	"github.com/leighmcculloch/static"
 )
 
 func TestDefaultOptions(t *testing.T) {
