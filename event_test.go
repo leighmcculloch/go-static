@@ -1,18 +1,20 @@
-package static
+package static_test
 
 import (
 	"errors"
 	"testing"
+
+	"github.com/leighmcculloch/static"
 )
 
 func TestString(t *testing.T) {
 	tests := []struct {
-		event    Event
+		event    static.Event
 		expected string
 	}{
-		{Event{Action: "action", Path: "/path", StatusCode: 200, OutputPath: "/output-path/path"}, "Action: action, Path: /path, StatusCode: 200, OutputPath: /output-path/path"},
-		{Event{Action: "action", Path: "/path", StatusCode: 404, OutputPath: "/output-path/path"}, "Action: action, Path: /path, StatusCode: 404, OutputPath: /output-path/path"},
-		{Event{Action: "action", Path: "/path", StatusCode: 200, OutputPath: "/output-path/path", Error: errors.New("error")}, "Action: action, Path: /path, StatusCode: 200, OutputPath: /output-path/path, Error: error"},
+		{static.Event{Action: "action", Path: "/path", StatusCode: 200, OutputPath: "/output-path/path"}, "Action: action, Path: /path, StatusCode: 200, OutputPath: /output-path/path"},
+		{static.Event{Action: "action", Path: "/path", StatusCode: 404, OutputPath: "/output-path/path"}, "Action: action, Path: /path, StatusCode: 404, OutputPath: /output-path/path"},
+		{static.Event{Action: "action", Path: "/path", StatusCode: 200, OutputPath: "/output-path/path", Error: errors.New("error")}, "Action: action, Path: /path, StatusCode: 200, OutputPath: /output-path/path, Error: error"},
 	}
 
 	for _, test := range tests {

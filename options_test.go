@@ -1,12 +1,14 @@
-package static
+package static_test
 
 import (
 	"testing"
+
+	"github.com/leighmcculloch/static"
 )
 
 func TestDefaultOptions(t *testing.T) {
-	options := DefaultOptions
-	expected := Options{OutputDir: "build", Concurrency: 50, DirFilename: "index.html"}
+	options := static.DefaultOptions
+	expected := static.Options{OutputDir: "build", Concurrency: 50, DirFilename: "index.html"}
 
 	t.Logf("DefaultOptions => %#v", options)
 	if options != expected {
