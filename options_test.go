@@ -3,7 +3,7 @@ package static_test
 import (
 	"testing"
 
-	"github.com/leighmcculloch/static"
+	"4d63.com/static"
 )
 
 func TestDefaultOptions(t *testing.T) {

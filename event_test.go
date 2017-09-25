@@ -4,7 +4,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/leighmcculloch/static"
+	"4d63.com/static"
 )
 
 func TestString(t *testing.T) {

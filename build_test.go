@@ -9,7 +9,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/leighmcculloch/static"
+	"4d63.com/static"
 )
 
 func TestBuildSingle(t *testing.T) {

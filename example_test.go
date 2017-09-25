@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"path"
 
-	"github.com/leighmcculloch/static"
+	"4d63.com/static"
 )
 
 func ExampleBuild() {

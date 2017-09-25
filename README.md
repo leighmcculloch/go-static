@@ -3,7 +3,7 @@
 [![Windows Build Status](https://img.shields.io/appveyor/ci/leighmcculloch/static.svg?label=windows)](https://ci.appveyor.com/project/leighmcculloch/static)
 [![Codecov](https://img.shields.io/codecov/c/github/leighmcculloch/static.svg)](https://codecov.io/gh/leighmcculloch/static)
 [![Go Report Card](https://goreportcard.com/badge/github.com/leighmcculloch/static)](https://goreportcard.com/report/github.com/leighmcculloch/static)
-[![Go docs](https://img.shields.io/badge/godoc-reference-blue.svg)](https://godoc.org/github.com/leighmcculloch/static)
+[![Go docs](https://img.shields.io/badge/godoc-reference-blue.svg)](https://godoc.org/4d63.com/static)
 
 Static is a package for generating static websites from any Go web app that uses `net/http`.
 
@@ -11,20 +11,20 @@ Static is a package for generating static websites from any Go web app that uses
 
 Building static websites with existing frameworks like [middleman](https://github.com/middleman/middleman) is easy, but large websites can be slow. [hugo](https://github.com/spf13/hugo) is a popular option if you need to convert content using templates, but not if you have a go web app that you want to make static.
 
-[static](https://github.com/leighmcculloch/static) helps you use build static websites that are dynamically generated from sources like RSS feeds, databases, APIs, etc by calling each handler registered and saving the output as files.
+[static](https://4d63.com/static) helps you use build static websites that are dynamically generated from sources like RSS feeds, databases, APIs, etc by calling each handler registered and saving the output as files.
 
 ## Go docs
 
-Get the go docs at: [godoc.org/github.com/leighmcculloch/static](https://godoc.org/github.com/leighmcculloch/static)
+Get the go docs at: [godoc.org/4d63.com/static](https://godoc.org/4d63.com/static)
 
 ## Install
 
 ```bash
-go get github.com/leighmcculloch/static
+go get 4d63.com/static
 ```
 
 ```go
-import "github.com/leighmcculloch/static"
+import "4d63.com/static"
 ```
 
 ## Usage
@@ -62,7 +62,7 @@ package main
 
 import (
   "net/http"
-  "github.com/leighmcculloch/static"
+  "4d63.com/static"
 )
 
 var build bool
