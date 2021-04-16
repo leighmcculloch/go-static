@@ -7,8 +7,5 @@ os:
   - osx
 
 script:
-  - go test -coverprofile=coverage.txt
+  - go test -cover
   - go vet
-
-after_success:
-  - bash <(curl -s https://codecov.io/bash)
